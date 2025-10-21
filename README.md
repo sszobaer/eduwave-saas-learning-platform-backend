@@ -121,77 +121,71 @@
 
 ## 7. Database Information
 
-# **EduWave LMS — Normalized Database Design**
+# EduWave LMS - Backend Database Schema Documentation
 
----
+## **1. Organizations & Users**
 
-## **1. organizations**
+### **organizations**
 
 | Column     | Type         | PK / FK | Description            |
 | ---------- | ------------ | ------- | ---------------------- |
 | org_id     | SERIAL       | PK      | Organization ID        |
 | name       | VARCHAR(255) |         | Organization name      |
-| domain     | VARCHAR(255) |         | Subdomain or domain    |
+| domain     | VARCHAR(255) |         | Subdomain / domain     |
 | created_at | TIMESTAMP    |         | Creation timestamp     |
 | updated_at | TIMESTAMP    |         | Last updated timestamp |
 
----
+### **roles**
 
-## **2. roles**
+| Column     | Type        | PK / FK | Description                      |
+| ---------- | ----------- | ------- | -------------------------------- |
+| role_id    | SERIAL      | PK      | Role ID                          |
+| role_name  | VARCHAR(50) |         | Role (Admin / Teacher / Student) |
+| created_at | TIMESTAMP   |         | Creation timestamp               |
+| updated_at | TIMESTAMP   |         | Last updated timestamp           |
 
-| Column     | Type        | PK / FK | Description                           |
-| ---------- | ----------- | ------- | ------------------------------------- |
-| role_id    | SERIAL      | PK      | Role ID                               |
-| role_name  | VARCHAR(50) |         | Role name (Admin / Teacher / Student) |
-| created_at | TIMESTAMP   |         | Creation timestamp                    |
-| updated_at | TIMESTAMP   |         | Last updated timestamp                |
-
----
-
-## **3. users**
+### **users**
 
 | Column      | Type                | PK / FK                    | Description            |
 | ----------- | ------------------- | -------------------------- | ---------------------- |
 | user_id     | SERIAL              | PK                         | User ID                |
 | org_id      | INT                 | FK → organizations(org_id) | Tenant / organization  |
 | role_id     | INT                 | FK → roles(role_id)        | Role of the user       |
-| full_name   | VARCHAR(255)        |                            | User’s full name       |
-| email       | VARCHAR(255) UNIQUE |                            | Email for login        |
+| full_name   | VARCHAR(255)        |                            | Full name              |
+| email       | VARCHAR(255) UNIQUE |                            | Email login            |
 | password    | VARCHAR(255)        |                            | Hashed password        |
-| profile_img | TEXT                |                            | Optional image         |
+| profile_img | TEXT                |                            | Profile image          |
 | created_at  | TIMESTAMP           |                            | Creation timestamp     |
 | updated_at  | TIMESTAMP           |                            | Last updated timestamp |
 
 ---
 
-## **4. courses**
+## **2. Courses & Tags**
 
-| Column             | Type          | PK / FK                    | Description                |
-| ------------------ | ------------- | -------------------------- | -------------------------- |
-| course_id          | SERIAL        | PK                         | Course ID                  |
-| org_id             | INT           | FK → organizations(org_id) | Organization               |
-| created_by_user_id | INT           | FK → users(user_id)        | Teacher who created course |
-| title              | VARCHAR(255)  |                            | Course title               |
-| description        | TEXT          |                            | Course description         |
-| price              | DECIMAL(10,2) |                            | Course fee                 |
-| thumbnail_url      | TEXT          |                            | Course thumbnail           |
-| created_at         | TIMESTAMP     |                            | Creation timestamp         |
-| updated_at         | TIMESTAMP     |                            | Last updated timestamp     |
+### **courses**
 
----
+| Column             | Type          | PK / FK                    | Description            |
+| ------------------ | ------------- | -------------------------- | ---------------------- |
+| course_id          | SERIAL        | PK                         | Course ID              |
+| org_id             | INT           | FK → organizations(org_id) | Organization           |
+| created_by_user_id | INT           | FK → users(user_id)        | Teacher creator        |
+| title              | VARCHAR(255)  |                            | Course title           |
+| description        | TEXT          |                            | Course description     |
+| price              | DECIMAL(10,2) |                            | Course fee             |
+| thumbnail_url      | TEXT          |                            | Course thumbnail       |
+| created_at         | TIMESTAMP     |                            | Creation timestamp     |
+| updated_at         | TIMESTAMP     |                            | Last updated timestamp |
 
-## **5. course_tags**
+### **course_tags**
 
-| Column     | Type         | PK / FK | Description                     |
-| ---------- | ------------ | ------- | ------------------------------- |
-| tag_id     | SERIAL       | PK      | Tag ID                          |
-| tag_name   | VARCHAR(100) |         | Tag name (Python, AI, Frontend) |
-| created_at | TIMESTAMP    |         | Creation timestamp              |
-| updated_at | TIMESTAMP    |         | Last updated timestamp          |
+| Column     | Type         | PK / FK | Description            |
+| ---------- | ------------ | ------- | ---------------------- |
+| tag_id     | SERIAL       | PK      | Tag ID                 |
+| tag_name   | VARCHAR(100) |         | Tag name               |
+| created_at | TIMESTAMP    |         | Creation timestamp     |
+| updated_at | TIMESTAMP    |         | Last updated timestamp |
 
----
-
-## **6. course_tags_mapping** *(Many-to-Many)*
+### **course_tags_mapping**
 
 | Column                | Type      | PK / FK                  | Description        |
 | --------------------- | --------- | ------------------------ | ------------------ |
@@ -202,7 +196,7 @@
 
 ---
 
-## **7. enrollments**
+## **3. Enrollments**
 
 | Column          | Type      | PK / FK                   | Description                |
 | --------------- | --------- | ------------------------- | -------------------------- |
@@ -216,22 +210,22 @@
 
 ---
 
-## **8. lectures**
+## **4. Lectures & Attendance**
 
-| Column             | Type         | PK / FK                 | Description                 |
-| ------------------ | ------------ | ----------------------- | --------------------------- |
-| lecture_id         | SERIAL       | PK                      | Lecture ID                  |
-| course_id          | INT          | FK → courses(course_id) | Linked course               |
-| created_by_user_id | INT          | FK → users(user_id)     | Teacher who created lecture |
-| title              | VARCHAR(255) |                         | Lecture topic               |
-| scheduled_at       | TIMESTAMP    |                         | Scheduled time              |
-| jitsi_link         | TEXT         |                         | Jitsi meeting URL           |
-| created_at         | TIMESTAMP    |                         | Creation timestamp          |
-| updated_at         | TIMESTAMP    |                         | Last updated timestamp      |
+### **lectures**
 
----
+| Column             | Type         | PK / FK                 | Description            |
+| ------------------ | ------------ | ----------------------- | ---------------------- |
+| lecture_id         | SERIAL       | PK                      | Lecture ID             |
+| course_id          | INT          | FK → courses(course_id) | Linked course          |
+| created_by_user_id | INT          | FK → users(user_id)     | Teacher creator        |
+| title              | VARCHAR(255) |                         | Lecture topic          |
+| scheduled_at       | TIMESTAMP    |                         | Scheduled time         |
+| jitsi_link         | TEXT         |                         | Jitsi meeting URL      |
+| created_at         | TIMESTAMP    |                         | Creation timestamp     |
+| updated_at         | TIMESTAMP    |                         | Last updated timestamp |
 
-## **9. attendance**
+### **attendance**
 
 | Column          | Type        | PK / FK                   | Description             |
 | --------------- | ----------- | ------------------------- | ----------------------- |
@@ -245,26 +239,26 @@
 
 ---
 
-## **10. assignments**
+## **5. Assignments & Submissions**
+
+### **assignments**
 
 | Column             | Type         | PK / FK                 | Description            |
 | ------------------ | ------------ | ----------------------- | ---------------------- |
 | assignment_id      | SERIAL       | PK                      | Assignment ID          |
 | course_id          | INT          | FK → courses(course_id) | Linked course          |
-| created_by_user_id | INT          | FK → users(user_id)     | Teacher who created    |
+| created_by_user_id | INT          | FK → users(user_id)     | Teacher creator        |
 | title              | VARCHAR(255) |                         | Assignment title       |
 | description        | TEXT         |                         | Instructions           |
 | due_date           | TIMESTAMP    |                         | Submission deadline    |
 | created_at         | TIMESTAMP    |                         | Creation timestamp     |
 | updated_at         | TIMESTAMP    |                         | Last updated timestamp |
 
----
-
-## **11. assignment_submissions**
+### **assignment_submissions**
 
 | Column          | Type      | PK / FK                         | Description            |
 | --------------- | --------- | ------------------------------- | ---------------------- |
-| submission_id   | SERIAL    | PK                              | Submission ID          |
+| assignment_submission_id   | SERIAL    | PK                              | Submission ID          |
 | assignment_id   | INT       | FK → assignments(assignment_id) | Linked assignment      |
 | student_user_id | INT       | FK → users(user_id)             | Student                |
 | submission_url  | TEXT      |                                 | Submitted file URL     |
@@ -276,21 +270,21 @@
 
 ---
 
-## **12. quizzes**
+## **6. Quizzes & Submissions**
+
+### **quizzes**
 
 | Column             | Type         | PK / FK                 | Description            |
 | ------------------ | ------------ | ----------------------- | ---------------------- |
 | quiz_id            | SERIAL       | PK                      | Quiz ID                |
 | course_id          | INT          | FK → courses(course_id) | Linked course          |
-| created_by_user_id | INT          | FK → users(user_id)     | Teacher who created    |
+| created_by_user_id | INT          | FK → users(user_id)     | Teacher creator        |
 | title              | VARCHAR(255) |                         | Quiz title             |
 | total_marks        | INT          |                         | Total marks            |
 | created_at         | TIMESTAMP    |                         | Creation timestamp     |
 | updated_at         | TIMESTAMP    |                         | Last updated timestamp |
 
----
-
-## **13. quiz_questions**
+### **quiz_questions**
 
 | Column         | Type         | PK / FK               | Description            |
 | -------------- | ------------ | --------------------- | ---------------------- |
@@ -302,9 +296,7 @@
 | created_at     | TIMESTAMP    |                       | Creation timestamp     |
 | updated_at     | TIMESTAMP    |                       | Last updated timestamp |
 
----
-
-## **14. quiz_submissions**
+### **quiz_submissions**
 
 | Column             | Type      | PK / FK               | Description            |
 | ------------------ | --------- | --------------------- | ---------------------- |
@@ -319,12 +311,12 @@
 
 ---
 
-## **15. payments**
+## **7. Payments**
 
 | Column          | Type          | PK / FK                 | Description                |
 | --------------- | ------------- | ----------------------- | -------------------------- |
 | payment_id      | SERIAL        | PK                      | Payment ID                 |
-| student_user_id | INT           | FK → users(user_id)     | Student who paid           |
+| student_user_id | INT           | FK → users(user_id)     | Student                    |
 | course_id       | INT           | FK → courses(course_id) | Linked course              |
 | amount          | DECIMAL(10,2) |                         | Paid amount                |
 | transaction_id  | VARCHAR(100)  |                         | Gateway transaction ID     |
@@ -334,7 +326,7 @@
 
 ---
 
-## **16. certificates**
+## **8. Certificates**
 
 | Column          | Type      | PK / FK                 | Description            |
 | --------------- | --------- | ----------------------- | ---------------------- |
@@ -348,7 +340,7 @@
 
 ---
 
-## **17. notifications**
+## **9. Notifications**
 
 | Column          | Type      | PK / FK             | Description            |
 | --------------- | --------- | ------------------- | ---------------------- |
@@ -361,7 +353,7 @@
 
 ---
 
-## **18. file_storage**
+## **10. File Storage**
 
 | Column              | Type         | PK / FK                         | Description                |
 | ------------------- | ------------ | ------------------------------- | -------------------------- |
@@ -378,7 +370,7 @@
 
 ---
 
-## **19. reviews**
+## **11. Reviews**
 
 | Column          | Type      | PK / FK                 | Description            |
 | --------------- | --------- | ----------------------- | ---------------------- |
@@ -392,48 +384,77 @@
 
 ---
 
-## **Relationships Summary (Normalized)**
+## **12. Chat / Messaging**
 
-| From Table                                      | To Table | Relationship                                 | Description |
-| ----------------------------------------------- | -------- | -------------------------------------------- | ----------- |
-| organizations → users                           | 1:N      | Each org has many users                      |             |
-| roles → users                                   | 1:N      | Each user has one role                       |             |
-| users → courses                                 | 1:N      | Teacher creates multiple courses             |             |
-| courses → course_tags_mapping → course_tags     | M:N      | Courses can have multiple tags               |             |
-| courses → enrollments                           | 1:N      | Students enroll in courses                   |             |
-| users → enrollments                             | 1:N      | Each student can enroll in many courses      |             |
-| courses → lectures                              | 1:N      | Course can have multiple lectures            |             |
-| lectures → attendance                           | 1:N      | Attendance per lecture per student           |             |
-| users → attendance                              | 1:N      | Each student has multiple attendance records |             |
-| courses → assignments                           | 1:N      | Course can have many assignments             |             |
-| assignments → assignment_submissions            | 1:N      | Students submit multiple assignments         |             |
-| users → assignment_submissions                  | 1:N      | Each student submits many                    |             |
-| courses → quizzes                               | 1:N      | Course has multiple quizzes                  |             |
-| quizzes → quiz_questions                        | 1:N      | Each quiz has multiple questions             |             |
-| quizzes → quiz_submissions                      | 1:N      | Multiple student submissions per quiz        |             |
-| users → quiz_submissions                        | 1:N      | Each student submits many quizzes            |             |
-| users → payments                                | 1:N      | Student can pay multiple courses             |             |
-| courses → payments                              | 1:N      | Course can have multiple payments            |             |
-| users → certificates                            | 1:N      | Student receives certificates                |             |
-| courses → certificates                          | 1:N      | Certificates tied to course completion       |             |
-| users → notifications                           | 1:N      | Users receive multiple notifications         |             |
-| courses / lectures / assignments → file_storage | 1:N      | Files related to course/lecture/assignment   |             |
-| users → file_storage                            | 1:N      | Users can upload many files                  |             |
-| courses → reviews                               | 1:N      | Multiple reviews per course                  |             |
-| users → reviews                                 | 1:N      | Each student can write many reviews          |             |
+### **chat_conversations**
+
+| Column             | Type         | PK / FK             | Description                    |
+| ------------------ | ------------ | ------------------- | ------------------------------ |
+| conversation_id    | SERIAL       | PK                  | Unique conversation ID         |
+| conversation_name  | VARCHAR(255) |                     | Optional group chat name       |
+| is_group           | BOOLEAN      |                     | TRUE = group chat, FALSE = 1:1 |
+| created_by_user_id | INT          | FK → users(user_id) | Creator                        |
+| created_at         | TIMESTAMP    |                     | Creation timestamp             |
+| updated_at         | TIMESTAMP    |                     | Last updated timestamp         |
+
+### **chat_participants**
+
+| Column          | Type      | PK / FK                                  | Description         |
+| --------------- | --------- | ---------------------------------------- | ------------------- |
+| participant_id  | SERIAL    | PK                                       | Participant ID      |
+| conversation_id | INT       | FK → chat_conversations(conversation_id) | Linked conversation |
+| user_id         | INT       | FK → users(user_id)                      | Participant user    |
+| joined_at       | TIMESTAMP |                                          | When joined         |
+| last_seen_at    | TIMESTAMP |                                          | Last read timestamp |
+
+### **chat_messages**
+
+| Column          | Type        | PK / FK                                  | Description                 |
+| --------------- | ----------- | ---------------------------------------- | --------------------------- |
+| message_id      | SERIAL      | PK                                       | Message ID                  |
+| conversation_id | INT         | FK → chat_conversations(conversation_id) | Linked conversation         |
+| sender_user_id  | INT         | FK → users(user_id)                      | Sender                      |
+| message_text    | TEXT        |                                          | Text content                |
+| message_type    | VARCHAR(50) |                                          | text / image / file / video |
+| file_url        | TEXT        |                                          | Optional attachment URL     |
+| created_at      | TIMESTAMP   |                                          | Sent timestamp              |
+| updated_at      | TIMESTAMP   |                                          | Edited timestamp            |
 
 ---
 
-This **full normalized schema** uses:
+## **Relationships Summary**
 
-* **Descriptive column names** (`student_user_id`, `created_by_user_id`)
-* **Many-to-many mapping
-
-
-** where necessary (`course_tags_mapping`)
-
-* **Timestamps** (`created_at`, `updated_at`) on all tables
-* **Ready for PostgreSQL implementation** and ERD generation
+| From Table                                      | To Table | Type                                         | Description |
+| ----------------------------------------------- | -------- | -------------------------------------------- | ----------- |
+| organizations → users                           | 1:N      | Each org has many users                      |             |
+| roles → users                                   | 1:N      | Each user has one role                       |             |
+| users → courses                                 | 1:N      | Teacher creates courses                      |             |
+| courses → course_tags_mapping → course_tags     | M:N      | Courses can have multiple tags               |             |
+| courses → enrollments                           | 1:N      | Students enroll in courses                   |             |
+| users → enrollments                             | 1:N      | Each student can enroll in multiple courses  |             |
+| courses → lectures                              | 1:N      | Multiple lectures per course                 |             |
+| lectures → attendance                           | 1:N      | Attendance per lecture                       |             |
+| users → attendance                              | 1:N      | Each student has multiple attendance records |             |
+| courses → assignments                           | 1:N      | Multiple assignments per course              |             |
+| assignments → assignment_submissions            | 1:N      | Student submissions per assignment           |             |
+| users → assignment_submissions                  | 1:N      | Each student submits multiple                |             |
+| courses → quizzes                               | 1:N      | Multiple quizzes per course                  |             |
+| quizzes → quiz_questions                        | 1:N      | Questions per quiz                           |             |
+| quizzes → quiz_submissions                      | 1:N      | Student submissions per quiz                 |             |
+| users → quiz_submissions                        | 1:N      | Each student submits multiple quizzes        |             |
+| users → payments                                | 1:N      | Multiple payments per student                |             |
+| courses → payments                              | 1:N      | Payments per course                          |             |
+| users → certificates                            | 1:N      | Multiple certificates per student            |             |
+| courses → certificates                          | 1:N      | Certificates per course                      |             |
+| users → notifications                           | 1:N      | Multiple notifications per user              |             |
+| courses / lectures / assignments → file_storage | 1:N      | Files related to course/lecture/assignment   |             |
+| users → file_storage                            | 1:N      | Users can upload multiple files              |             |
+| courses → reviews                               | 1:N      | Multiple reviews per course                  |             |
+| users → reviews                                 | 1:N      | Each student can write many reviews          |             |
+| chat_conversations → chat_participants          | 1:N      | Each conversation has participants           |             |
+| users → chat_participants                       | 1:N      | Each user can be in multiple conversations   |             |
+| chat_conversations → chat_messages              | 1:N      | Each conversation has messages               |             |
+| users → chat_messages                           | 1:N      | Each user can send many messages             |             |
 
 ---
 
