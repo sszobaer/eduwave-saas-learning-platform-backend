@@ -1,4 +1,4 @@
-**EduWave LMS - Backend Development Plan (Updated)**
+# **EduWave LMS - Backend Development Plan**
 
 ---
 
@@ -457,5 +457,3 @@
 | users → chat_messages                           | 1:N      | Each user can send many messages             |             |
 
 ---
-
-
