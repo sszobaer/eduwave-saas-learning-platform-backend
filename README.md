@@ -153,13 +153,19 @@ ami abir
 | org_id      | INT                 | FK → organizations(org_id) | Tenant / organization  |
 | role_id     | INT                 | FK → roles(role_id)        | Role of the user       |
 | full_name   | VARCHAR(255)        |                            | Full name              |
-| email       | VARCHAR(255) UNIQUE |                            | Email login            |
-| password    | VARCHAR(255)        |                            | Hashed password        |
 | profile_img | TEXT                |                            | Profile image          |
 | created_at  | TIMESTAMP           |                            | Creation timestamp     |
 | updated_at  | TIMESTAMP           |                            | Last updated timestamp |
 
 ---
+### **auths**
+| Column      | Type                | PK / FK                    | Description            |
+| ----------- | ------------------- | -------------------------- | ---------------------- |
+| auth_id     | SERIAL              | PK                         | auth ID                |
+| email       | VARCHAR(255) UNIQUE |                            | Email login            |
+| password    | VARCHAR(255)        |                            | Hashed password        |
+| user_id     | SERIAL              | FK                         | User ID                |
+| last login  | TIMESTAMP           |                            | loggedin timestamp     |
 
 ## **2. Courses & Tags**
 
