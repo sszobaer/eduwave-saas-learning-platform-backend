@@ -1,6 +1,4 @@
 # **EduWave LMS - Backend Development Plan**
-ami abir
-
 ---
 
 ## 1. Project Overview
