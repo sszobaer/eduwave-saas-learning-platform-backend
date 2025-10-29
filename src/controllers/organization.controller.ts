@@ -7,7 +7,7 @@ import { OrganizationService } from "src/services/organization.service";
 export class OrganizationController {
     constructor(private readonly organizationService: OrganizationService) {}
     @Post('create')
-    craete(@Body() data: CreateOrgDto){
+    create(@Body() data: CreateOrgDto){
         return this.organizationService.create(data);
     }
 

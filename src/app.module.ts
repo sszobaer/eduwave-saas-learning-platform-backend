@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from './modules/auth.module';
 import { UserModule } from './modules/user.module';
-import { RolesModule } from './modules/roles.module';
-import { OrganizationsModule } from './modules/organizations.module';
+import { RoleModule } from './modules/role.module';
+import { OrganizationModule } from './modules/organization.module';
 import { CoursesModule } from './modules/courses.module';
 import { CourseTagsModule } from './modules/course_tags.module';
 import { EnrollementsModule } from './modules/enrollements.module';
@@ -43,8 +43,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
   }),
     AuthModule, 
     UserModule, 
-    RolesModule, 
-    OrganizationsModule, 
+    RoleModule, 
+    OrganizationModule, 
     CoursesModule, 
     CourseTagsModule, 
     EnrollementsModule, 

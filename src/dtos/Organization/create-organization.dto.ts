@@ -5,9 +5,4 @@ export class CreateOrgDto {
     @IsNotEmpty()
     @MaxLength(255)
     org_name: string;
-
-    @IsString()
-    @IsNotEmpty()
-    @MaxLength(255)
-    domain: string;
 }
