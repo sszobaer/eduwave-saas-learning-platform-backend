@@ -16,7 +16,7 @@ export class OrganizationController {
         return this.organizationService.findAll();
     }
 
-    @Get(':id')
+    @Get('find/:id')
     findOne(@Param('id') id:number){
         return this.organizationService.findOne(id);
     }

@@ -6,7 +6,6 @@ import { RoleModule } from './modules/role.module';
 import { OrganizationModule } from './modules/organization.module';
 import { CoursesModule } from './modules/courses.module';
 import { CourseTagsModule } from './modules/course_tags.module';
-import { EnrollementsModule } from './modules/enrollements.module';
 import { LecturesModule } from './modules/lectures.module';
 import { AttendanceModule } from './modules/attendance.module';
 import { AssignmentsModule } from './modules/assignments.module';
@@ -47,7 +46,6 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
     OrganizationModule, 
     CoursesModule, 
     CourseTagsModule, 
-    EnrollementsModule, 
     LecturesModule, 
     AttendanceModule, 
     AssignmentsModule, 

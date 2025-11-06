@@ -2,19 +2,19 @@ import { BadRequestException, Injectable, NotFoundException } from "@nestjs/comm
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateOrgDto } from "src/dtos/Organization/create-organization.dto";
 import { UpdateOrg } from "src/dtos/Organization/update-organization.dto";
-import { Organizations } from "src/entities/organization.entity";
+import { Organization } from "src/entities/organization.entity";
 import { generateOrgDomain } from "src/Utils/org.util";
 import { Repository } from "typeorm";
 
 @Injectable()
 export class OrganizationService {
     constructor(
-        @InjectRepository(Organizations)
-        private readonly orgRepo: Repository<Organizations>
+        @InjectRepository(Organization)
+        private readonly orgRepo: Repository<Organization>
     ) { }
 
     //Problem here I am not able to use Try Catch
-    async create(data: CreateOrgDto): Promise<Organizations> {
+    async create(data: CreateOrgDto): Promise<Organization> {
         // try {
         const exists = await this.orgRepo.findOne({ where: { org_name: data.org_name } });
         if (exists) {
@@ -35,7 +35,7 @@ export class OrganizationService {
 
     }
 
-    async findAll(): Promise<Organizations[]> {
+    async findAll(): Promise<Organization[]> {
         const allOrg = await this.orgRepo.find();
         if (!allOrg) {
             throw new NotFoundException('No Organization found');
@@ -43,7 +43,7 @@ export class OrganizationService {
         return allOrg;
     }
 
-    async findOne(id: number): Promise<Organizations> {
+    async findOne(id: number): Promise<Organization> {
         const org = await this.orgRepo.findOne({ where: { org_id: id } });
         if (!org) {
             throw new NotFoundException(`Organization Not Found. Try again`);
@@ -51,7 +51,7 @@ export class OrganizationService {
         return org;
     }
 
-    async update(id: number, data: UpdateOrg): Promise<Organizations> {
+    async update(id: number, data: UpdateOrg): Promise<Organization> {
         const org = await this.findOne(id);
 
         if(!org){
