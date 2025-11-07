@@ -122,18 +122,7 @@
 
 # EduWave LMS - Backend Database Schema Documentation
 
-## **1. Organizations & Users**
-
-### **organizations**
-
-| Column     | Type         | PK / FK | Description            |
-| ---------- | ------------ | ------- | ---------------------- |
-| org_id     | SERIAL       | PK      | Organization ID        |
-| name       | VARCHAR(255) |         | Organization name      |
-| domain     | VARCHAR(255) |         | Subdomain / domain     |
-| created_at | TIMESTAMP    |         | Creation timestamp     |
-| updated_at | TIMESTAMP    |         | Last updated timestamp |
-
+## **1. Users & Auth**
 ### **roles**
 
 | Column     | Type        | PK / FK | Description                      |
@@ -172,7 +161,6 @@
 | Column             | Type          | PK / FK                    | Description            |
 | ------------------ | ------------- | -------------------------- | ---------------------- |
 | course_id          | SERIAL        | PK                         | Course ID              |
-| org_id             | INT           | FK → organizations(org_id) | Organization           |
 | created_by_user_id | INT           | FK → users(user_id)        | Teacher creator        |
 | title              | VARCHAR(255)  |                            | Course title           |
 | description        | TEXT          |                            | Course description     |
@@ -263,7 +251,7 @@
 
 | Column          | Type      | PK / FK                         | Description            |
 | --------------- | --------- | ------------------------------- | ---------------------- |
-| assignment_submission_id   | SERIAL    | PK                              | Submission ID          |
+| assignment_submission_id   | SERIAL    | PK                              | Submission ID |
 | assignment_id   | INT       | FK → assignments(assignment_id) | Linked assignment      |
 | student_user_id | INT       | FK → users(user_id)             | Student                |
 | submission_url  | TEXT      |                                 | Submitted file URL     |
