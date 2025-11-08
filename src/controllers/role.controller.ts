@@ -5,29 +5,29 @@ import { RoleService } from "src/services/role.service";
 
 @Controller('role')
 export class RoleController {
-    constructor(private readonly roleService: RoleService) { }
+    constructor(private readonly RoleService: RoleService) { }
 
     @Post('create')
-    CreateRole(@Body() data: CreateRoleDto) {
-        return this.roleService.create(data);
+    async CreateRole(@Body() data: CreateRoleDto) {
+        return await this.RoleService.create(data);
     }
     @Get()
-    findAllRoles() {
-        return this.roleService.findAll();
+    async findAllRoles() {
+        return await this.RoleService.findAll();
     }
 
     @Get(':id')
-    findOne(@Param('id') id: number) {
-        return this.roleService.findOne(id);
+    async findOneRole(@Param('id') id: number) {
+        return await this.RoleService.findOne(id);
     }
 
     @Put(':id')
-    update(@Param('id') id: number, @Body() data: UpdateRoleDto) {
-        return this.roleService.update(id, data);
+    async updateRole(@Param('id') id: number, @Body() data: UpdateRoleDto) {
+        return await this.RoleService.update(id, data);
     }
 
     @Delete(':id')
-    remove(@Param('id') id: number) {
-        return this.roleService.remove(id);
+    async removeRole(@Param('id') id: number) {
+        return await this.RoleService.remove(id);
     }
 }

@@ -1,19 +1,17 @@
-import { IsNotEmpty, IsNumber, IsString } from "class-validator";
+import { Type } from "class-transformer";
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateUserDto{
     @IsNotEmpty()
     @IsNumber()
-    org_id: number;
-
-    @IsNotEmpty()
-    @IsNumber()
+    @Type(() => Number)
     role_id: number;
 
     @IsNotEmpty({"message": "Name must not be empty"})
     @IsString()
     full_name: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsString()
-    profile_img: string;
+    profile_img?: string;
 }

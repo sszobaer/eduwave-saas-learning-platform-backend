@@ -20,5 +20,4 @@ export class Auth {
 
     @Column({ type: 'timestamp', nullable: true })
     last_login: Date;
-
 }
