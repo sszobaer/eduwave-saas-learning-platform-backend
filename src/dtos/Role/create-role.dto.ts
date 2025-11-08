@@ -1,5 +1,4 @@
-// create-user.dto.ts
-import { IsEnum, IsNotEmpty, IsString, MaxLength } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, MaxLength} from 'class-validator';
 import { UserRole } from '../../Utils/user-role.enum';
 
 
