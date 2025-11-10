@@ -1,8 +1,8 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Role } from "./role.entity";
-import { Auth } from "./auth.entity";
+import {UserCredential } from "./user-credentital.entity";
 
-@Entity()
+@Entity('user')
 export class User {
     @PrimaryGeneratedColumn()
     user_id: number;
@@ -13,8 +13,8 @@ export class User {
     @JoinColumn({name: 'role_id'})
     role:Role;
 
-    @OneToOne(()=>Auth, (auth)=>auth.user)
-    auth: Auth;
+    @OneToOne(()=>UserCredential, (credential)=>credential.user)
+    credential: UserCredential;
     
     @Column({type: 'varchar', length: 30})
     full_name: string;

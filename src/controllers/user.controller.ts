@@ -7,6 +7,7 @@ import { UserService } from "src/services/user.service";
 @Controller('user')
 export class UserController {
     constructor(private readonly UserService: UserService) { }
+    
     @Post('create')
     @UseInterceptors(
         FileInterceptor('profile_img', {

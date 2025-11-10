@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from './modules/auth.module';
 import { UserModule } from './modules/user.module';
 import { RoleModule } from './modules/role.module';
 import { CoursesModule } from './modules/courses.module';
@@ -20,6 +19,7 @@ import { ReviewsModule } from './modules/reviews.module';
 import { ChatModule } from './modules/chat.module';
 import { AdminModule } from './modules/admin.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { AuthModule } from './modules/auth.module';
 
 @Module({
   imports: [
@@ -39,7 +39,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         logging: true,
     }),
   }),
-    AuthModule, 
+    AuthModule,
     UserModule, 
     RoleModule,  
     CoursesModule, 

@@ -1,6 +1,7 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDto } from "src/dtos/User/create-user.dto";
+import { UserResponseDto } from "src/dtos/User/response-user.dto";
 import { UpdateUserDto } from "src/dtos/User/update-user.dto";
 import { Role } from "src/entities/role.entity";
 import { User } from "src/entities/user.entity";
@@ -12,10 +13,12 @@ export class UserService {
         @InjectRepository(User)
         private readonly userRepo: Repository<User>
     ) { }
-    //Auth is pending
 
     async create(data: CreateUserDto): Promise<User> {
-        const role = await this.userRepo.manager.getRepository(Role).findOneBy({ role_id: data.role_id });
+        const role = await this.userRepo.manager.getRepository(Role).findOne({
+            where : {role_id : data.role_id},
+            select: ['role_id', 'role_name']
+        });
         if (!role) throw new BadRequestException('Role not found');
 
         const user = this.userRepo.create({
@@ -27,14 +30,14 @@ export class UserService {
     }
 
     async update(id: number, data: UpdateUserDto): Promise<User> {
-            const user = await this.findOne(id);
-            if(!user) throw new NotFoundException(`User Not Found. Try again`);
+        const user = await this.findOne(id);
+        if(!user) throw new NotFoundException(`User Not Found. Try again`);
     
-            Object.assign(user,data);
-            return this.userRepo.save(user);
+        Object.assign(user,data);
+        return this.userRepo.save(user);
         }
 
-    async findAll(): Promise<any[]> {
+    async findAll(): Promise<UserResponseDto[]> {
         const users = await this.userRepo.find({ relations: ['role'] });
         if (!users.length) throw new BadRequestException('No user found');
 

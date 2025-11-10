@@ -1,10 +1,10 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { User } from "./user.entity";
 
-@Entity('Auth')
-export class Auth {
+@Entity('userCredential')
+export class UserCredential {
     @PrimaryGeneratedColumn()
-    auth_id: string;
+    credential_id: string;
 
     @Column({type: 'varchar', length: 255, unique: true})
     email: string;
@@ -12,7 +12,7 @@ export class Auth {
     @Column({type: 'varchar', length: 255})
     password: string;
 
-    @OneToOne(()=>User, (user)=> user.auth, {
+    @OneToOne(()=>User, (user)=> user.credential, {
         onDelete: 'CASCADE'
     })
     @JoinColumn({name: 'user_id'})
