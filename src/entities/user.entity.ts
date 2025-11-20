@@ -22,6 +22,9 @@ export class User {
     @Column({type: 'text', nullable: true})
     profile_img: string;
 
+    @Column({default: true})
+    isActive: boolean;
+
     @CreateDateColumn({type: 'timestamp'})
     created_at: Date;
 

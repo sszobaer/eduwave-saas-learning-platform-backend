@@ -1,4 +1,4 @@
-import { IsOptional, IsString, IsInt, IsUrl, MaxLength } from 'class-validator';
+import { IsOptional, IsString, IsInt, IsUrl, MaxLength, IsBoolean } from 'class-validator';
 
 export class UpdateUserDto {
   @IsOptional()
@@ -17,4 +17,7 @@ export class UpdateUserDto {
   @IsOptional()
   @IsUrl()
   profile_img?: string;
+
+  // @IsBoolean()
+  // isActive: boolean;
 }

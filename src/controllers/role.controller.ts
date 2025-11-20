@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Delete } from "@nestjs/common";
+import { Body, Controller, Get, Param, Post, Put, Delete, ParseIntPipe } from "@nestjs/common";
 import { CreateRoleDto } from "src/dtos/Role/create-role.dto";
 import { UpdateRoleDto } from "src/dtos/Role/update-role.dto";
 import { RoleService } from "src/services/role.service";
@@ -17,17 +17,17 @@ export class RoleController {
     }
 
     @Get(':id')
-    async findOneRole(@Param('id') id: number) {
+    async findOneRole(@Param('id', ParseIntPipe) id: number) {
         return await this.RoleService.findOne(id);
     }
 
     @Put(':id')
-    async updateRole(@Param('id') id: number, @Body() data: UpdateRoleDto) {
+    async updateRole(@Param('id', ParseIntPipe) id: number, @Body() data: UpdateRoleDto) {
         return await this.RoleService.update(id, data);
     }
 
     @Delete(':id')
-    async removeRole(@Param('id') id: number) {
+    async removeRole(@Param('id', ParseIntPipe) id: number) {
         return await this.RoleService.remove(id);
     }
 }

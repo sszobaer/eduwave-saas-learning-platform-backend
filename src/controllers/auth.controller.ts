@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, UploadedFile, UseInterceptors,Get } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage, MulterError } from 'multer';
 import { RegisterDto } from 'src/dtos/Register/create-register.dto';
@@ -8,7 +8,7 @@ import { AuthService } from 'src/services/auth.service';
 export class AuthController {
     constructor(private readonly AuthService: AuthService) { }
 
-    @Post('create')
+    @Post('registraton')
     @UseInterceptors(
         FileInterceptor('profile_img', {
             fileFilter: (req, file, cb) => {
