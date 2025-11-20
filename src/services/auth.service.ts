@@ -41,7 +41,6 @@ export class AuthService {
             });
             await manager.save(newCredential);
 
-            //Now insert into User
             const newUser = manager.create(User, {
                 full_name: data.full_name,
                 profile_img: data.profile_img,
