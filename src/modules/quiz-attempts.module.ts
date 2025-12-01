@@ -1,4 +1,4 @@
-import { Module, forwardRef } from '@nestjs/common';
+import { Module} from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
 import { QuizAttemptsController } from 'src/controllers/quiz-attempts.controller';
@@ -10,7 +10,7 @@ import { Question } from 'src/entities/question.entity';
 import { QuizAttemptAnswer } from 'src/entities/quiz-attempt-answer.entity';
 import { QuestionOption } from 'src/entities/question-option.entity';
 import { User } from 'src/entities/user.entity';
-import { Auth } from 'src/entities/auth.entity';
+import { UserCredential } from 'src/entities/user-credentital.entity';
 
 
 @Module({
@@ -22,7 +22,7 @@ import { Auth } from 'src/entities/auth.entity';
       QuizAttemptAnswer,
       QuestionOption,
       User,
-      Auth,
+      UserCredential
     ]),
   ],
   controllers: [QuizAttemptsController],

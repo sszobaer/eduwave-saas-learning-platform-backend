@@ -5,6 +5,16 @@ import { RoleModule } from './modules/role.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthModule } from './modules/auth.module';
 import { EmailModule } from './modules/email.module';
+import { QuizzesModule } from './modules/quizzes.module';
+import { QuizAttemptsModule } from './modules/quiz-attempts.module';
+import { QuizAttemptAnswersModule } from './modules/quiz-attempt-answers.module';
+import { QuestionsModule } from './modules/questions.module';
+import { QuestionOptionsModule } from './modules/question-options.module';
+import { CourseModule } from './modules/course.module';
+import { EnrollmentModule } from './modules/enrollment.module';
+import { LectureModule } from './modules/lecture.module';
+import { PaymentModule } from './modules/payment.module';
+import { AssignmentModule } from './modules/assignment.module';
 
 @Module({
   imports: [
@@ -28,6 +38,16 @@ import { EmailModule } from './modules/email.module';
     UserModule, 
     RoleModule,  
     EmailModule,
+    QuizzesModule,
+    QuizAttemptsModule,
+    QuizAttemptAnswersModule,
+    QuestionsModule,
+    QuestionOptionsModule,
+    CourseModule,
+    EnrollmentModule,
+    LectureModule,
+    PaymentModule,
+    AssignmentModule
   ],
   controllers: [],
   providers: [],
