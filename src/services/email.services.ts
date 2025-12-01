@@ -15,7 +15,7 @@ export class EmailService {
   async sendEmail(payload: SendEmailDto): Promise<void> {
     const { to, subject, text, html, from } = payload;
 
-    try {
+    try { 
       await this.mailer.sendMail({
         to,
         subject,

@@ -1,15 +1,19 @@
-import { Body, Controller, Post, Get, Delete, Param, ParseIntPipe, Put } from "@nestjs/common";
-import { diskStorage, MulterError } from "multer";
-import { CreateUserDto } from "src/dtos/User/create-user.dto";
+import { Body, Controller, Get, Delete, Param, ParseIntPipe, Put, Req, UseGuards} from "@nestjs/common";
+
 import { UpdateUserDto } from "src/dtos/User/update-user.dto";
+import { AuthGuard } from "src/guards/auth.guard";
 import { UserService } from "src/services/user.service";
 
 @Controller('user')
 export class UserController {
     constructor(private readonly UserService: UserService) { }
 
-    @Get()
-    findAllUsers() {
+    @UseGuards(AuthGuard)
+    @Get('getallusers')
+    findAllUsers(@Req() req) {
+        console.log('====================================');
+        console.log("Logged in user", req.user);
+        console.log('====================================');
         return this.UserService.findAll();
     }
     @Put(':id')

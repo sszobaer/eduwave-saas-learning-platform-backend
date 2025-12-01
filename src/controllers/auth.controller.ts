@@ -1,6 +1,8 @@
-import { BadRequestException, Body, Controller, Post, UploadedFile, UseInterceptors,Get } from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, UploadedFile, UseInterceptors} from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage, MulterError } from 'multer';
+import { LoginDto } from 'src/dtos/Login/login.dto';
+import { RefreshTokenDto } from 'src/dtos/RefreshToken/refreh-token.dto';
 import { RegisterDto } from 'src/dtos/Register/create-register.dto';
 import { AuthService } from 'src/services/auth.service';
 
@@ -32,5 +34,15 @@ export class AuthController {
 
         data.profile_img = `/uploads/${file.filename}`;
         return this.AuthService.register(data);
+    }
+
+    @Post('login')
+    login(@Body() data:LoginDto){
+       return this.AuthService.login(data);
+    }
+
+    @Post('refresh')
+    refresh(@Body() data: RefreshTokenDto){
+        return this.AuthService.refreshTokens(data);
     }
 }
