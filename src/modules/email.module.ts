@@ -1,7 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { MailerModule } from '@nestjs-modules/mailer';
-import { EmailService } from 'src/services/email.service';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { EmailService } from 'src/services/email.services';
 
 @Global()
 @Module({
@@ -19,6 +19,8 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
             user: config.get<string>('SMTP_USER'),
             pass: config.get<string>('SMTP_PASS'),
           },
+    debug: false,   // Disable debug logs
+    logger: false,
         },
         defaults: {
           from: config.get<string>('MAIL_FROM'),

@@ -1,13 +1,16 @@
-import { BadRequestException, Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { RegisterDto } from 'src/dtos/Register/create-register.dto';
 import { Role } from 'src/entities/role.entity';
 import { User } from 'src/entities/user.entity';
-import { DataSource, Repository } from 'typeorm';
+import { DataSource, MoreThanOrEqual, Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { UserCredential } from 'src/entities/user-credentital.entity';
 import { LoginDto } from 'src/dtos/Login/login.dto';
 import { JwtService } from '@nestjs/jwt';
+import { RefreshToken } from 'src/entities/refresh-token.entity';
+import { v4 as uuidv4 } from 'uuid';
+import { RefreshTokenDto } from 'src/dtos/RefreshToken/refreh-token.dto';
 
 @Injectable()
 export class AuthService {
@@ -19,6 +22,8 @@ export class AuthService {
         private readonly roleRepo: Repository<Role>,
         private dataSource: DataSource,
         private readonly jwtService: JwtService,
+        @InjectRepository(RefreshToken)
+        private readonly refreshTokenRepo: Repository<RefreshToken>
     ) { }
 
     async register(data: RegisterDto): Promise<object> {
@@ -62,19 +67,26 @@ export class AuthService {
         if (!credential) throw new BadRequestException('Invalid Credentials!');
 
         const isMatch = await bcrypt.compare(data.password, credential.password);
-        if (!isMatch)
-            throw new BadRequestException('Email or password is incorrect.');
 
+        if (!isMatch)
+            throw new BadRequestException('Wrong Credentials!');
+
+        //Access Token
         const payload = {
             sub: credential.user.user_id,
             role: credential.user.role.role_name
         };
 
-        const token = this.jwtService.sign(payload);
+        const accessToken = this.jwtService.sign(payload);
+
+        //Refresh Token
+        const refreshToken = uuidv4();
+        await this.storeRefreshToken(refreshToken, credential.user);
 
         return {
             message: 'Login Successful',
-            access_token: token,
+            access_token: accessToken,
+            refresh_token: refreshToken,
             user: {
                 id: credential.user.user_id,
                 name: credential.user.full_name,
@@ -82,5 +94,52 @@ export class AuthService {
                 role: credential.user.role.role_name,
             }
         }
+    }
+
+
+    async refreshTokens(refreshToken: RefreshTokenDto) {
+        const token = await this.refreshTokenRepo.findOne({
+            where: {
+                token: refreshToken.token,
+                expiresAt: MoreThanOrEqual(new Date()),
+            },
+            relations: ['user', 'user.role'],
+        })
+
+        if (!token) throw new UnauthorizedException("Invalid Refresh Token");
+
+        const user = token.user;
+
+
+        const payload = {
+            sub: user.user_id,
+            role: user.role.role_name,
+        };
+
+        const newAccessToken = this.jwtService.sign(payload, {
+            secret: process.env.JWT_SECRET,
+        });
+
+        const newRefreshToken = uuidv4();
+        await this.storeRefreshToken(newRefreshToken, user);
+
+        return {
+            access_token: newAccessToken,
+            refresh_token: newRefreshToken,
+        };
+    }
+
+
+    async storeRefreshToken(token: string, user: User) {
+        const expiresAt = new Date();
+        expiresAt.setDate(expiresAt.getDate() + 3);
+
+        const refreshToken = this.refreshTokenRepo.create({
+            token,
+            user,
+            expiresAt
+        });
+
+        return await this.refreshTokenRepo.save(refreshToken);
     }
 }

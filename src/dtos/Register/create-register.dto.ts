@@ -1,11 +1,11 @@
-import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, MaxLength, MinLength } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsOptional, IsString, Matches, MaxLength } from "class-validator";
 import { Role } from "src/Utils/user-role.enum";
 
 
 export class RegisterDto {
     @IsNotEmpty()
     @IsString()
-    @MaxLength(8)
+    @MaxLength(20)
     @Matches(/^[A-Za-z\s]+$/, { message: 'Name must be contain only alphabets' })
     full_name: string;
 
@@ -29,10 +29,4 @@ export class RegisterDto {
     @IsString()
     @IsEnum(Role, {message: "Enter a valid role."})
     role_name: string;
-
-    // @IsNotEmpty()
-    // @Matches(/^01\d{9}$/, {
-    //     message: 'Phone number must start with 01 and be exactly 11 digits long.',
-    // })
-    // phone: string;
 }

@@ -1,6 +1,7 @@
-import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 import { Role } from "./role.entity";
 import {UserCredential } from "./user-credentital.entity";
+import { RefreshToken } from "./refresh-token.entity";
 
 @Entity('user')
 export class User {
@@ -24,6 +25,10 @@ export class User {
 
     @Column({default: true})
     isActive: boolean;
+
+    @OneToMany(() => RefreshToken, (refreshToken) => refreshToken.user)
+    refreshTokens: RefreshToken[];
+
 
     @CreateDateColumn({type: 'timestamp'})
     created_at: Date;

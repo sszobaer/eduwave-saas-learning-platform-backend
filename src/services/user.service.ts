@@ -1,11 +1,10 @@
 import { BadRequestException, Injectable, NotFoundException } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { CreateUserDto } from "src/dtos/User/create-user.dto";
-import { UserResponseDto } from "src/dtos/User/response-user.dto";
 import { UpdateUserDto } from "src/dtos/User/update-user.dto";
 import { Role } from "src/entities/role.entity";
 import { User } from "src/entities/user.entity";
-import { And, DataSource, Like, Repository } from "typeorm";
+import { DataSource, Repository } from "typeorm";
 
 @Injectable()
 export class UserService {
