@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, FindOptionsWhere, IsNull } from 'typeorm';
+import { Repository, FindOptionsWhere } from 'typeorm';
 import {
   AttemptStatus,
   QuizAttempt,
@@ -17,8 +17,8 @@ import { User } from 'src/entities/user.entity';
 import { CreateQuizAttemptDto } from 'src/dtos/Quiz/create-quiz-attempt.dto';
 import { UpdateQuizAttemptDto } from 'src/dtos/Quiz/update-quiz-attempt.dto';
 import { EmailService } from 'src/services/email.service';
+import { UserCredential } from 'src/entities/user-credentital.entity';
 
-import { Auth } from 'src/entities/auth.entity';
 
 interface FindByStudentFilter {
   studentUserId: number;
@@ -38,8 +38,8 @@ export class QuizAttemptsService {
     private readonly answerRepo: Repository<QuizAttemptAnswer>,
     @InjectRepository(QuestionOption)
     private readonly optionRepo: Repository<QuestionOption>,
-    @InjectRepository(Auth)
-    private readonly authRepo: Repository<Auth>,
+    @InjectRepository(UserCredential)
+    private readonly credentialRepo: Repository<UserCredential>,
     @InjectRepository(User)
     private readonly userRepo: Repository<User>,
     private readonly emailService: EmailService
@@ -271,17 +271,30 @@ export class QuizAttemptsService {
       where: { user_id: saved.studentUserId },
     });
 
-    const auth = await this.authRepo.findOne({
-      where: { user: { user_id: saved.studentUserId}},
+    // const auth = await this.authRepo.findOne({
+    //   where: { user: { user_id: saved.studentUserId}},
+    // });
+
+    const credential = await this.credentialRepo.findOne({
+      where: {
+        user:{
+          user_id: saved.studentUserId,
+        }
+      }
     });
 
+if (!credential) throw new Error("Credential not found");
+
+console.log("Email:", credential.email);
+
+
   
-  if (name?.full_name && auth?.email ) {
+  if (name?.full_name && credential?.email ) {
     const percent = maxMarks > 0 ? ((obtainedMarks / maxMarks) * 100).toFixed(2) : '0';
     console.log("name result:", name.full_name);
-    console.log("Email result:", auth.email);
+    console.log("Email result:", credential.email);
     await this.emailService.sendEmail({
-      to: auth.email,
+      to: credential.email,
       subject: `Your result for quiz: ${saved.quiz.title}`,
       html: `
         <p>Hi ${name.full_name || 'Student'},</p>

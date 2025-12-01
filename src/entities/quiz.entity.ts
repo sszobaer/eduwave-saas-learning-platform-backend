@@ -2,8 +2,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, OneToMany, CreateDateColumn, UpdateDateColumn, JoinColumn, } from 'typeorm';
 import { Course } from 'src/entities/course.entity';
 import { User } from 'src/entities/user.entity';
-import { Question } from 'src/entities/question.entity';
-import { QuizAttempt } from 'src/entities/quiz-attempt.entity';
+import { Question } from './question.entity';
+import { QuizAttempt } from './quiz-attempt.entity';
 
 @Entity({ name: 'quizzes' })
 export class Quiz {
