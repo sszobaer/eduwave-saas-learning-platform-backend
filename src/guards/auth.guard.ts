@@ -19,9 +19,7 @@ export class AuthGuard implements CanActivate {
     if (bearer.toLowerCase() !== 'bearer') throw new UnauthorizedException();
 
 
-    try {
-        console.log('SECRET USED:', process.env.JWT_SECRET);
-        
+    try { 
       const payload = await this.jwtService.verifyAsync(token);
       request['user'] = payload;
       return true;

@@ -1,32 +1,41 @@
-import { Body, Controller, Get, Delete, Param, ParseIntPipe, Put, Req, UseGuards} from "@nestjs/common";
+import { Body, Controller, Get, Delete, Param, ParseIntPipe, Put, Req, UseGuards } from "@nestjs/common";
+import { Roles } from "src/decorators/roles.decorator";
 
 import { UpdateUserDto } from "src/dtos/User/update-user.dto";
 import { AuthGuard } from "src/guards/auth.guard";
+import { RolesGuard } from "src/guards/role.guard";
 import { UserService } from "src/services/user.service";
 
 @Controller('user')
 export class UserController {
     constructor(private readonly UserService: UserService) { }
 
-    @UseGuards(AuthGuard)
-    @Get('getallusers')
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('admin')
+    @Get('getall')
     findAllUsers(@Req() req) {
-        console.log('====================================');
         console.log("Logged in user", req.user);
-        console.log('====================================');
         return this.UserService.findAll();
     }
+
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('admin')
     @Put(':id')
-    async updateUser(@Param('id', ParseIntPipe) id: number, @Body() data:UpdateUserDto ){
+    async updateUser(@Req() @Param('id', ParseIntPipe) id: number, @Body() data: UpdateUserDto) {
         return await this.UserService.update(id, data);
     }
 
-    @Get(':id')
-    async findOneUser(@Param('id', ParseIntPipe) id: number) {
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('admin')
+    @Get('getone/:id')
+    async findOneUser(@Req() @Param('id', ParseIntPipe) id: number) {
         return await this.UserService.findOne(id);
     }
-    @Delete(':id')
-    async removeUser(@Param("id") id: number) {
+
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('admin')
+    @Delete('delete/:id')
+    async removeUser(@Req() @Param("id") id: number) {
         return await this.UserService.remove(id);
     }
 }

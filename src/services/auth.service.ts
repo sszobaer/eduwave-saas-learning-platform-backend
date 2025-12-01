@@ -96,7 +96,6 @@ export class AuthService {
         }
     }
 
-
     async refreshTokens(refreshToken: RefreshTokenDto) {
         const token = await this.refreshTokenRepo.findOne({
             where: {
@@ -109,7 +108,6 @@ export class AuthService {
         if (!token) throw new UnauthorizedException("Invalid Refresh Token");
 
         const user = token.user;
-
 
         const payload = {
             sub: user.user_id,
