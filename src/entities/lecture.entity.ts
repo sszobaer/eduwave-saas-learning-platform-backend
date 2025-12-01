@@ -32,11 +32,8 @@ export class Lecture {
   @Column({ type: 'varchar', length: 255 })
   title: string;
 
-  @Column({ type: 'timestamp' })
-  scheduled_at: Date;
-
   @Column({ type: 'text' })
-  jitsi_link: string;
+  video_link: string;
 
   @CreateDateColumn({ type: 'timestamp' })
   created_at: Date;
