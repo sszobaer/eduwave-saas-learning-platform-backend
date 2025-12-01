@@ -8,10 +8,6 @@ export class EmailService {
 
   constructor(private readonly mailer: MailerService) {}
 
-  /*
-   Generic method to send any email.
-   Other services (quiz, enrollment, etc.) construct the message and call this.
-   */
   async sendEmail(payload: SendEmailDto): Promise<void> {
     const { to, subject, text, html, from } = payload;
 
@@ -21,7 +17,7 @@ export class EmailService {
         subject,
         text,
         html,
-        from, // will fall back to default if undefined
+        from, 
       });
 
       this.logger.log(
@@ -31,8 +27,7 @@ export class EmailService {
       this.logger.error(
         `Failed to send email to ${Array.isArray(to) ? to.join(', ') : to}: ${error.message}`,
         error.stack,
-      );
-      
+      ); 
     }
   }
 }
