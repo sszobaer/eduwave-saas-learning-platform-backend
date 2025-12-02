@@ -11,6 +11,7 @@ import { JwtService } from '@nestjs/jwt';
 import { RefreshToken } from 'src/entities/refresh-token.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { RefreshTokenDto } from 'src/dtos/RefreshToken/refreh-token.dto';
+import { EmailService } from './email.service';
 
 @Injectable()
 export class AuthService {
@@ -23,7 +24,8 @@ export class AuthService {
         private dataSource: DataSource,
         private readonly jwtService: JwtService,
         @InjectRepository(RefreshToken)
-        private readonly refreshTokenRepo: Repository<RefreshToken>
+        private readonly refreshTokenRepo: Repository<RefreshToken>,
+        private readonly emailService: EmailService
     ) { }
 
     async register(data: RegisterDto): Promise<object> {
@@ -82,6 +84,17 @@ export class AuthService {
         //Refresh Token
         const refreshToken = uuidv4();
         await this.storeRefreshToken(refreshToken, credential.user);
+
+        //Mailer functionality
+        this.emailService.sendEmail({
+        to: credential.email,
+        subject: 'New Login Alert',
+        text: `Hi ${credential.user.full_name}, your account was just accessed.`,
+        html: `<p>Hi <strong>${credential.user.full_name}</strong>,</p>
+               <p>We noticed a login to your account. If this was you, you can safely ignore this email.</p>
+               <p>If you did not log in, please reset your password immediately.</p>`,
+        from: '"EduWave LMS Platform" <no-reply@yourapp.com>',
+    }).catch(err => console.error('Login email failed:', err));
 
         return {
             message: 'Login Successful',
