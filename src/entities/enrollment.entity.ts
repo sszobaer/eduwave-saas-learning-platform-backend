@@ -31,7 +31,7 @@ export class Enrollment {
 
   @OneToOne(() => Payment, { nullable: true, onDelete: 'SET NULL' })
   @JoinColumn({ name: 'payment_id' })
-  payment: Payment;
+  payment: Payment | null;
 
   @Column({ type: 'timestamp' })
   enrolled_at: Date;
