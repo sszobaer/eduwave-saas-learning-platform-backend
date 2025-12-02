@@ -11,7 +11,7 @@ export class UserController {
     constructor(private readonly UserService: UserService) { }
 
     @UseGuards(AuthGuard, RolesGuard)
-    @Roles('admin')
+    @Roles('admin', 'teacher')
     @Get('getall')
     findAllUsers(@Req() req) {
         console.log("Logged in user", req.user);
@@ -19,21 +19,21 @@ export class UserController {
     }
 
     @UseGuards(AuthGuard, RolesGuard)
-    @Roles('admin')
+    @Roles('admin', 'teacher')
     @Put(':id')
     async updateUser(@Req() @Param('id', ParseIntPipe) id: number, @Body() data: UpdateUserDto) {
         return await this.UserService.update(id, data);
     }
 
     @UseGuards(AuthGuard, RolesGuard)
-    @Roles('admin')
+    @Roles('admin', 'teacher')
     @Get('getone/:id')
     async findOneUser(@Req() @Param('id', ParseIntPipe) id: number) {
         return await this.UserService.findOne(id);
     }
 
     @UseGuards(AuthGuard, RolesGuard)
-    @Roles('admin')
+    @Roles('admin', 'teacher')
     @Delete('delete/:id')
     async removeUser(@Req() @Param("id") id: number) {
         return await this.UserService.remove(id);

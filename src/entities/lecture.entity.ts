@@ -15,14 +15,12 @@ export class Lecture {
   @PrimaryGeneratedColumn()
   lecture_id: number;
 
-  // FK → courses(course_id)
   @ManyToOne(() => Course, (course) => course.lectures, {
     onDelete: 'CASCADE',
   })
   @JoinColumn({ name: 'course_id' })
   course: Course;
 
-  // FK → users(user_id)
   @ManyToOne(() => User, (user) => user.created_lectures, {
     onDelete: 'CASCADE',
   })

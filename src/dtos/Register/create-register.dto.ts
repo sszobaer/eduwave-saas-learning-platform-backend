@@ -11,7 +11,6 @@ export class RegisterDto {
 
     @IsNotEmpty()
     @IsEmail()
-    @Matches(/@.*\.org$/, { message: 'Email must contain @ and .org domain' })
     email: string;
 
     @IsNotEmpty()
