@@ -10,7 +10,7 @@ import { AuthService } from 'src/services/auth.service';
 export class AuthController {
     constructor(private readonly AuthService: AuthService) { }
 
-    @Post('registraton')
+    @Post('register')
     @UseInterceptors(
         FileInterceptor('profile_img', {
             fileFilter: (req, file, cb) => {
