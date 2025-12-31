@@ -40,8 +40,7 @@ export class AuthService {
         const hashed_password = await bcrypt.hash(data.password, saltRound);
 
         return this.dataSource.transaction(async (manager) => {
-            //Insert into Credential
-            //Always avoid to naming the as same as the entity class
+
             const newCredential = manager.create(UserCredential, {
                 email: data.email,
                 password: hashed_password,
@@ -73,7 +72,6 @@ export class AuthService {
         if (!isMatch)
             throw new BadRequestException('Wrong Credentials!');
 
-        //Access Token
         const payload = {
             sub: credential.user.user_id,
             role: credential.user.role.role_name
@@ -81,11 +79,9 @@ export class AuthService {
 
         const accessToken = this.jwtService.sign(payload);
 
-        //Refresh Token
         const refreshToken = uuidv4();
         await this.storeRefreshToken(refreshToken, credential.user);
 
-        //Mailer functionality
         this.emailService.sendEmail({
         to: credential.email,
         subject: 'New Login Alert',

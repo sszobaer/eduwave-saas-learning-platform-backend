@@ -1,8 +1,7 @@
-import { Type } from 'class-transformer';
+import { BadRequestException } from '@nestjs/common';
 import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateLectureDto {
-    @Type(() => Number)
     @IsNumber()
     course_id: number;
 
@@ -12,5 +11,5 @@ export class CreateLectureDto {
 
     @IsString()
     @IsOptional()
-    video_link?: string;
+    lecture_video?: string;
 }

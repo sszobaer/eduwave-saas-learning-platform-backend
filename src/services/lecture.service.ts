@@ -24,7 +24,7 @@ export class LectureService {
 
     const lecture = this.lectureRepo.create({
       title: dto.title,
-      video_link: dto.video_link,
+      video_link: dto.lecture_video,
       course,
       created_by_user: user,
     });
@@ -38,7 +38,7 @@ export class LectureService {
       relations: ['course', 'created_by_user'],
     });
     if (!lecture) throw new NotFoundException('Lecture not found');
-    return lecture;
+    return lecture.course;
   }
 
   async getAllLectures() {

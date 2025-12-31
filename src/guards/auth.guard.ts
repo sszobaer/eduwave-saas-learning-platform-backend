@@ -9,7 +9,7 @@ export class AuthGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
     const authHeader = request.headers['authorization'];
-    if (!authHeader) throw new UnauthorizedException('Authorization header not found');
+    if (!authHeader) throw new UnauthorizedException('No Auth here');
 
     const [bearer, token] = authHeader.split(' ');
     if (bearer !== 'Bearer' || !token) {
