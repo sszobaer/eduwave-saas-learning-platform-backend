@@ -24,7 +24,7 @@ export class LectureService {
 
     const lecture = this.lectureRepo.create({
       title: dto.title,
-      video_link: dto.lecture_video,
+      video_link: dto.lecture_video, //video link
       course,
       created_by_user: user,
     });
