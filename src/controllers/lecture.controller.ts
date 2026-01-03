@@ -1,15 +1,20 @@
-import {Body, Controller, Post, Put, Get, Param, Delete, UploadedFile, UseGuards, UseInterceptors, BadRequestException,
+import {Body, Controller, Post, Put, Get, Param, Delete, UploadedFile, UseGuards, UseInterceptors, BadRequestException, ParseIntPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { plainToInstance } from 'class-transformer';
+import { validateOrReject } from 'class-validator';
+import { log } from 'console';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { GetUser } from 'src/decorators/get-user.decorator';
 import { Roles } from 'src/decorators/roles.decorator';
 import { CreateLectureDto } from 'src/dtos/Lecture/create-lecture.dto';
 import { UpdateLectureDto } from 'src/dtos/Lecture/update-lecture.dto';
+import { Course } from 'src/entities/course.entity';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
 import { LectureService } from 'src/services/lecture.service';
+import { Int32 } from 'typeorm';
 
 @Controller('lectures')
 @UseGuards(AuthGuard, RolesGuard)
@@ -17,10 +22,19 @@ import { LectureService } from 'src/services/lecture.service';
 export class LectureController {
     constructor(private readonly lectureService: LectureService) { }
 
+    // @Post('quizzes/:quizId/questions')
+    //   createForQuiz(
+    //     @Param('quizId', ParseIntPipe) quizId: number,
+    //     @Body() createQuestionDto: CreateQuestionDto,
+    //   ) {
+        
+    //     createQuestionDto.quizId = quizId;
+    //     return this.questionsService.create(createQuestionDto);
+    //   }
 
-    @Post('create')
+    @Post(':courseId/create')
     @UseInterceptors(
-        FileInterceptor('video', {
+        FileInterceptor('lecture_video', {
             storage: diskStorage({
                 destination: './uploads/lecture-videos',
                 filename: (req, file, cb) => {
@@ -37,23 +51,31 @@ export class LectureController {
     )
     async createLecture(
         @UploadedFile() file: Express.Multer.File,
-        @Body() dto: CreateLectureDto,
+        @Param('courseId') courseId: number,
+        @Body() body: any,
         @GetUser() user: any,
     ) {
-        if (!file && !dto.video_link) {
+        const dto = plainToInstance(CreateLectureDto, {
+        ...body,
+        course_id: courseId, 
+    });
+
+    await validateOrReject(dto);
+
+        if (!file && !dto.lecture_video) {
             throw new BadRequestException('Video file or video link is required');
         }
 
         if (file) {
-            dto.video_link = `/uploads/lecture-videos/${file.filename}`;
+            dto.lecture_video = `/uploads/lecture-videos/${file.filename}`;
         }
 
         return this.lectureService.createLecture(dto, user.sub);
     }
 
-    @Put('update/:id')
+    @Put(':courseId/update/:id')
     @UseInterceptors(
-        FileInterceptor('video', {
+        FileInterceptor('lecture_video', {
             storage: diskStorage({
                 destination: './uploads/lecture-videos',
                 filename: (req, file, cb) => {
@@ -70,11 +92,18 @@ export class LectureController {
     )
     async updateLecture(
         @Param('id') id: number,
+        @Param('courseId') courseId: number,
         @UploadedFile() file: Express.Multer.File,
-        @Body() dto: UpdateLectureDto,
+        @Body() body: any,
     ) {
+        const dto = plainToInstance(UpdateLectureDto, {
+        ...body,
+        course_id: courseId, 
+    });
+
+    await validateOrReject(dto);
         if (file)
-            dto.video_link = `/uploads/lecture-videos/${file.filename}`;
+            dto.lecture_video = `/uploads/lecture-videos/${file.filename}`;
 
         return this.lectureService.updateLecture(id, dto);
     }

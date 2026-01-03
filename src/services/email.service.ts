@@ -7,7 +7,6 @@ export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
   constructor(private readonly mailer: MailerService) {}
-
   async sendEmail(payload: SendEmailDto): Promise<void> {
     const { to, subject, text, html, from } = payload;
 

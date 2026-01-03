@@ -1,4 +1,4 @@
-import { BadRequestException, Body, Controller, Delete, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
+import { BadRequestException, Body, Controller, Delete, Get, Param, Patch, Post, UploadedFile, UseGuards, UseInterceptors } from "@nestjs/common";
 import { FileInterceptor } from "@nestjs/platform-express";
 import { diskStorage, MulterError } from "multer";
 import { GetUser } from "src/decorators/get-user.decorator";
@@ -15,7 +15,7 @@ import { CourseService } from "src/services/course.service";
 export class CourseController {
     constructor(private readonly courseService: CourseService) { }
 
-    @Post('create')
+    @Post('create') 
     @UseGuards(AuthGuard)
     @UseInterceptors(
         FileInterceptor('thumbnail', {
@@ -74,6 +74,10 @@ export class CourseController {
         return this.courseService.updateCourse(id, data, user.sub);
     }
 
+    @Get(':id')
+        async getCourseById(@Param('id') id: number) {
+            return this.courseService.getCourseById(id);
+        }
 
     @Delete('delete/:id')
     deleteCourse(
@@ -82,4 +86,6 @@ export class CourseController {
     ) {
         return this.courseService.deleteCourse(Number(id), user.sub);
     }
+
+    
 }

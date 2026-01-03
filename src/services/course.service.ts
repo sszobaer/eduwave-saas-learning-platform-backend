@@ -77,6 +77,21 @@ export class CourseService {
         });
     }
 
+//     async getCourse(courseId: number) {
+//   const course = await this.courseRepo.findOne({
+//     where: { course_id: courseId },
+//     relations: ['lectures'],
+//   });
+
+  async getCourseById(courseId: number) {
+    const course = await this.courseRepo.findOne({
+      where: { course_id: courseId },
+      relations: ['lectures', 'created_by_user'],
+    });
+    if (!course) throw new NotFoundException('Lecture not found');
+    return course.lectures;
+  }
+
 
     async updateCourse(courseId: number, data: UpdateCourseDto, userId: number) {
         const course = await this.courseRepo.findOne({
