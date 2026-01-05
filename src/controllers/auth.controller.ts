@@ -5,6 +5,8 @@ import { LoginDto } from 'src/dtos/Login/login.dto';
 import { RefreshTokenDto } from 'src/dtos/RefreshToken/refreh-token.dto';
 import { RegisterDto } from 'src/dtos/Register/create-register.dto';
 import { AuthService } from 'src/services/auth.service';
+import { ForgotPasswordDto } from 'src/dtos/ForgotPassword/forgot-password.dto';
+import { ChangePasswordDto } from 'src/dtos/ChangePassword/change-password.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -45,4 +47,19 @@ export class AuthController {
     refresh(@Body() data: RefreshTokenDto){
         return this.AuthService.refreshTokens(data);
     }
+
+    // Forgot Password: Endpoint to send OTP to email
+    @Post('forgot-password')
+    async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    const response = await this.AuthService.forgotPassword(forgotPasswordDto);
+    return response; // Success message: OTP sent to email
+    }
+
+    // Change Password: Endpoint to change password after OTP verification
+    @Post('change-password')
+    async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
+    const response = await this.AuthService.changePassword(changePasswordDto);
+    return response; // Success message: Password updated successfully
+  }
+
 }

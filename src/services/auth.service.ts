@@ -12,9 +12,12 @@ import { RefreshToken } from 'src/entities/refresh-token.entity';
 import { v4 as uuidv4 } from 'uuid';
 import { RefreshTokenDto } from 'src/dtos/RefreshToken/refreh-token.dto';
 import { EmailService } from './email.service';
+import { ForgotPasswordDto } from 'src/dtos/ForgotPassword/forgot-password.dto';
+import { ChangePasswordDto } from 'src/dtos/ChangePassword/change-password.dto';
 
 @Injectable()
 export class AuthService {
+private otpCache: { [email: string]: { otp: string, expiresAt: number } } = {}; // Temporary OTP storage
 
     constructor(
         @InjectRepository(UserCredential)
@@ -86,15 +89,14 @@ export class AuthService {
         await this.storeRefreshToken(refreshToken, credential.user);
 
         //Mailer functionality
-        this.emailService.sendEmail({
+        await this.emailService.sendEmail({
         to: credential.email,
         subject: 'New Login Alert',
-        text: `Hi ${credential.user.full_name}, your account was just accessed.`,
-        html: `<p>Hi <strong>${credential.user.full_name}</strong>,</p>
-               <p>We noticed a login to your account. If this was you, you can safely ignore this email.</p>
-               <p>If you did not log in, please reset your password immediately.</p>`,
-        from: '"EduWave LMS Platform" <no-reply@yourapp.com>',
-    }).catch(err => console.error('Login email failed:', err));
+        template: 'login-alert',
+        context: {
+        name: credential.user.full_name,
+        },
+        });
 
         return {
             message: 'Login Successful',
@@ -153,4 +155,90 @@ export class AuthService {
 
         return await this.refreshTokenRepo.save(refreshToken);
     }
+
+
+    // Forgot Password: Generate OTP and send email
+    async forgotPassword(data: ForgotPasswordDto): Promise<object> {
+        const userCredential = await this.credentialRepo.findOne({
+        where: { email: data.email },
+        relations: ['user'],
+        });
+
+        if (!userCredential) throw new BadRequestException('Email not found.');
+
+         const otp = this.generateOtp();
+         const expiration = Date.now() + 600000; // OTP valid for 10 minutes
+
+         // Store OTP temporarily (e.g., in-memory cache)
+         this.storeOtp(data.email, otp, expiration);
+
+         // Send OTP to user's email
+         await this.emailService.sendEmail({
+         to: data.email,
+         subject: 'Password Reset OTP',
+         template: 'forgot-password-otp',
+         context: {
+         name: userCredential.user.full_name,
+         otp,
+         },
+         });
+
+        return { message: 'OTP sent to your email.' };
+    }
+
+    // Change Password: Validate OTP and update password
+    async changePassword(data: ChangePasswordDto): Promise<object> {
+        const { email, otp, newPassword } = data;
+
+        // Validate OTP
+        const storedOtp = this.validateOtp(email, otp);
+        if (!storedOtp) throw new BadRequestException('Invalid or expired OTP');
+
+         // Hash the new password
+         const saltRound = 10;
+         const hashedPassword = await bcrypt.hash(newPassword, saltRound);
+
+         // Update the password
+         const userCredential = await this.credentialRepo.findOne({
+         where: { email },
+         relations: ['user'],
+        });
+
+        if (!userCredential) throw new BadRequestException('User not found.');
+
+         userCredential.password = hashedPassword;
+         await this.credentialRepo.save(userCredential);
+
+         // Clear OTP after use
+         this.clearOtp(email);
+
+         return { message: 'Password updated successfully.' };
+        }
+
+        // Utility: Generate a 6-digit OTP
+        private generateOtp(): string {
+        return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Store OTP temporarily (in-memory or a cache solution like Redis)
+        private storeOtp(email: string, otp: string, expiresAt: number) {
+        this.otpCache[email] = { otp, expiresAt };
+        }
+
+        // Validate OTP (check expiration and correctness)
+        private validateOtp(email: string, otp: string): boolean {
+        const otpEntry = this.otpCache[email];
+        if (!otpEntry) return false;
+
+          if (otpEntry.otp !== otp || Date.now() > otpEntry.expiresAt) {
+           return false;
+          }
+         return true;
+        }
+
+        // Clear OTP after use
+        private clearOtp(email: string) {
+        delete this.otpCache[email];
+    }
+
 }
