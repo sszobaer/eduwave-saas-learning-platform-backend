@@ -93,10 +93,27 @@ Ensure the following are installed:
 Create a `.env` file in the root directory:
 
 ```env
-PORT=3000
-DATABASE_URL=your_database_connection_string
+# JWT Configuration
 JWT_SECRET=your_jwt_secret
-JWT_EXPIRES_IN=1d
+JWT_EXPIRES=1h
+
+# Database Configuration (PostgreSQL)
+DB_HOST=localhost
+DB_PORT=5432
+DB_USERNAME=postgres
+DB_PASSWORD=your_db_password
+DB_NAME=eduwave
+
+# SMTP / Email Configuration
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASS=your_app_password
+MAIL_FROM="EduWave LMS Platform" <noreply@example.com>
+
+#PORT
+PORT = 3000
+
 ```
 
 > ⚠️ Never commit `.env` files to version control.
@@ -108,8 +125,8 @@ JWT_EXPIRES_IN=1d
 Clone the repository and install dependencies:
 
 ```bash
-git clone https://github.com/your-username/eduwave-backend.git
-cd eduwave-backend
+git clone https://github.com/sszobaer/eduwave-saas-learning-platform-backend.git
+cd eduwave-saas-learning-platform-backend
 npm install
 ```
 
@@ -155,7 +172,7 @@ Authorization: Bearer <token>
 ## Frontend Integration
 
 Frontend development is currently **in progress**.
-The backend API is designed to integrate seamlessly with modern frontend frameworks such as **React**, **Next.js**, or **Angular**.
+The backend API is designed to integrate seamlessly with modern frontend frameworks such as **React**, **Next.js**, or **Angular** (We are doing on Next.js).
 
 ---
 
