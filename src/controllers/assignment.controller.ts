@@ -1,8 +1,7 @@
     // assignment.controller.ts
-    import { Controller, Post, Body, Get, Param, Put, Delete, UsePipes, ValidationPipe, ParseIntPipe, Patch } from '@nestjs/common';
+    import { Controller, Post, Body, Get, Param, Put, Delete, UsePipes, ValidationPipe, ParseIntPipe } from '@nestjs/common';
     import { AssignmentService } from 'src/services/assignment.service';
     import { CreateAssignmentDto, UpdateAssignmentDto } from 'src/dtos/Assignment/assignment.dto';
-    import { User } from 'src/entities/user.entity'; // current user injected via guard
 
     @Controller('assignments')
     export class AssignmentController {

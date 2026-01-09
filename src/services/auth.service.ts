@@ -67,6 +67,10 @@ export class AuthService {
 
         if (!credential) throw new BadRequestException('Invalid Credentials!');
 
+        if (!credential.user.isActive) {
+            throw new UnauthorizedException('User is blocked');
+        }
+
         const isMatch = await bcrypt.compare(data.password, credential.password);
 
         if (!isMatch)
@@ -83,14 +87,14 @@ export class AuthService {
         await this.storeRefreshToken(refreshToken, credential.user);
 
         this.emailService.sendEmail({
-        to: credential.email,
-        subject: 'New Login Alert',
-        text: `Hi ${credential.user.full_name}, your account was just accessed.`,
-        html: `<p>Hi <strong>${credential.user.full_name}</strong>,</p>
+            to: credential.email,
+            subject: 'New Login Alert',
+            text: `Hi ${credential.user.full_name}, your account was just accessed.`,
+            html: `<p>Hi <strong>${credential.user.full_name}</strong>,</p>
                <p>We noticed a login to your account. If this was you, you can safely ignore this email.</p>
                <p>If you did not log in, please reset your password immediately.</p>`,
-        from: '"EduWave LMS Platform" <no-reply@yourapp.com>',
-    }).catch(err => console.error('Login email failed:', err));
+            from: '"EduWave LMS Platform" <no-reply@yourapp.com>',
+        }).catch(err => console.error('Login email failed:', err));
 
         return {
             message: 'Login Successful',

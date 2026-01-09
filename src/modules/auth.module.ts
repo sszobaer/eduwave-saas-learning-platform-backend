@@ -9,11 +9,12 @@ import { AuthService } from "src/services/auth.service";
 import { ConfigModule, ConfigService } from "@nestjs/config";
 import { RefreshToken } from "src/entities/refresh-token.entity";
 import { AuthGuard } from "src/guards/auth.guard";
+import { User } from "src/entities/user.entity";
 
 @Module({
   imports: [
     ConfigModule,
-    TypeOrmModule.forFeature([UserCredential, Role, RefreshToken]),
+    TypeOrmModule.forFeature([User,UserCredential, Role, RefreshToken]),
     PassportModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],

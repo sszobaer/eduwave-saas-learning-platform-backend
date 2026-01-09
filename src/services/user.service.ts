@@ -38,30 +38,6 @@ export class UserService {
         return this.userRepo.save(user);
         }
 
-        // const users = await this.userRepo.find({ 
-        //     relations: ['role'],
-        //     where: {
-        //         role: {
-        //             role_id: 1
-        //         }
-        //     },
-        //     order: {
-        //         user_id: 'DESC'
-        //     }
-        //  } );
-        // if (!users.length) throw new BadRequestException('No user found');
-
-// where: {
-             // full_name: Like('s%zz%')
-        // }
-
-        // return users.map((user) => ({
-        //     ...user,
-        //     role: {
-        //         role_id: user.role.role_id,
-        //         role_name: user.role.role_name,
-        //     },
-        // }));
     async findAll(): Promise<object> {
         const users = await this.dataSource.getRepository(User).find({
         relations: ['role', 'credential'],
@@ -106,17 +82,4 @@ export class UserService {
 
         if (response.affected === 0) throw new NotFoundException('User Not Found. Try Agin');
     }
-    //     const user = await this.userRepo.findOne({
-    //         where:{
-    //             credential:{
-    //                 email: email
-    //             }
-    //         },
-    //         relations:['credential']
-    // });
-
-    // if(!user) throw new NotFoundException("User not found");
-
-    // await this.userRepo.delete(user.user_id);
-    // }
 }
