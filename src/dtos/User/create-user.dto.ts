@@ -1,5 +1,5 @@
 import { Type } from "class-transformer";
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsNotEmpty, IsNumber, IsOptional, IsString } from "class-validator";
 
 export class CreateUserDto{
     @IsNotEmpty()
@@ -15,6 +15,6 @@ export class CreateUserDto{
     @IsString()
     profile_img?: string;
 
-    // @IsBoolean()
-    // isActive: boolean;
+    @IsBoolean()
+    isActive: boolean;
 }

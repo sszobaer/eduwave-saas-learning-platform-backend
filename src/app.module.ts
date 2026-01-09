@@ -15,6 +15,7 @@ import { EnrollmentModule } from './modules/enrollment.module';
 import { LectureModule } from './modules/lecture.module';
 import { PaymentModule } from './modules/payment.module';
 import { AssignmentModule } from './modules/assignment.module';
+import { AdminDashboardModule } from './modules/Dashboard/admin-dashboard.module';
 
 @Module({
   imports: [
@@ -47,7 +48,8 @@ import { AssignmentModule } from './modules/assignment.module';
     EnrollmentModule,
     LectureModule,
     PaymentModule,
-    AssignmentModule
+    AssignmentModule,
+    AdminDashboardModule
   ],
   controllers: [],
   providers: [],
