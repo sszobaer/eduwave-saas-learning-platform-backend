@@ -11,11 +11,11 @@ import { CourseService } from "src/services/course.service";
 
 @Controller('courses')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('teacher')
+@Roles('teacher', 'admin')
 export class CourseController {
     constructor(private readonly courseService: CourseService) { }
 
-    @Post('create') 
+    @Post('create')
     @UseGuards(AuthGuard)
     @UseInterceptors(
         FileInterceptor('thumbnail', {
@@ -75,9 +75,15 @@ export class CourseController {
     }
 
     @Get(':id')
-        async getCourseById(@Param('id') id: number) {
-            return this.courseService.getCourseById(id);
-        }
+    async getCourseById(@Param('id') id: number, @GetUser() user: any) {
+        return this.courseService.getCourse(id, user.sub);
+    }
+
+    @Get()
+    async getAllCourses(@GetUser() user: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.courseService.getAllCourses(user.sub);
+    }
 
     @Delete('delete/:id')
     deleteCourse(
@@ -87,5 +93,5 @@ export class CourseController {
         return this.courseService.deleteCourse(Number(id), user.sub);
     }
 
-    
+
 }
