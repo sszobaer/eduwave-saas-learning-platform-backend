@@ -1,0 +1,28 @@
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AdminDashboardController } from "src/controllers/Admin/admin-dashboard.controller";
+import { Course } from "src/entities/course.entity";
+import { User } from "src/entities/user.entity";
+import { AuthGuard } from "src/guards/auth.guard";
+import { RolesGuard } from "src/guards/role.guard";
+import { AdminDashboardService } from "src/services/Admin/admin-dashboard.service";
+import { AuthModule } from "../auth.module";
+import { AdminCourseController } from "src/controllers/Admin/admin-course.controller";
+import { AdminEnrollmentController } from "src/controllers/Admin/admin-enrollment.controller";
+import { AdminLectureController } from "src/controllers/Admin/admin-lecture.controller";
+import { AdminQuizController } from "src/controllers/Admin/admin-quiz.controller";
+import { Lecture } from "src/entities/lecture.entity";
+import { Quiz } from "src/entities/quiz.entity";
+import { AdminCourseService } from "src/services/Admin/admin-course.service";
+import { AdminEnrollmentService } from "src/services/Admin/admin-enrollment.service";
+import { AdminQuizService } from "src/services/Admin/admin-quiz.service";
+import { Enrollment } from "src/entities/enrollment.entity";
+import { AdminLectureService } from "src/services/Admin/admin-lecture.service";
+
+@Module({
+    imports: [TypeOrmModule.forFeature([User, Course, Lecture, Quiz, Enrollment]), AuthModule],
+    controllers: [AdminDashboardController, AdminCourseController, AdminEnrollmentController, AdminLectureController, AdminQuizController],
+    providers: [AdminDashboardService, AdminCourseService, AdminEnrollmentService, AdminQuizService, AdminLectureService, RolesGuard, AuthGuard]
+})
+
+export class AdminDashboardModule { }
