@@ -1,4 +1,3 @@
-// src/admin-dashboard/admin-dashboard.controller.ts
 import {
   Controller,
   Get,
@@ -9,14 +8,16 @@ import {
 import { Roles } from 'src/decorators/roles.decorator';
 import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
-import { AdminDashboardService } from 'src/services/Dashboard/admin-dashboard.service';
+import { AdminDashboardService } from 'src/services/Admin/admin-dashboard.service';
 
 
 @Controller('admin')
 @UseGuards(AuthGuard, RolesGuard)
 @Roles('admin')
 export class AdminDashboardController {
-  constructor(private readonly adminService: AdminDashboardService) {}
+  constructor(
+    private readonly adminService: AdminDashboardService
+  ) {}
 
   @Get('dashboard')
   getDashboardStats() {

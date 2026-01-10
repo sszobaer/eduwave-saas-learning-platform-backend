@@ -1,132 +1,138 @@
-import { ForbiddenException, Injectable, NotFoundException } from "@nestjs/common";
-import { InjectRepository } from "@nestjs/typeorm";
-import { CreateCourseDto } from "src/dtos/Course/create-course.dto";
-import { UpdateCourseDto } from "src/dtos/Course/update-course.dto";
-import { CourseTagMapping } from "src/entities/course-tags-mapping";
-import { Tag } from "src/entities/course-tags.entity";
-import { Course } from "src/entities/course.entity";
-import { Repository } from "typeorm";
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
+import { Course } from 'src/entities/course.entity';
+import { Tag } from 'src/entities/course-tags.entity';
+import { CourseTagMapping } from 'src/entities/course-tags-mapping';
+import { CreateCourseDto } from 'src/dtos/Course/create-course.dto';
+import { UpdateCourseDto } from 'src/dtos/Course/update-course.dto';
+import { promises } from 'dns';
 
 @Injectable()
 export class CourseService {
-    constructor(
-        @InjectRepository(Course)
-        private courseRepo: Repository<Course>,
+  constructor(
+    @InjectRepository(Course)
+    private readonly courseRepo: Repository<Course>,
 
-        @InjectRepository(Tag)
-        private tagRepo: Repository<Tag>,
+    @InjectRepository(Tag)
+    private readonly tagRepo: Repository<Tag>,
 
-        @InjectRepository(CourseTagMapping)
-        private mapRepo: Repository<CourseTagMapping>
-    ) { }
-
-    async createCourse(data: CreateCourseDto, userId: number) {
-        const course = this.courseRepo.create({
-            ...data,
-            created_by_user: { user_id: userId }
-        });
-
-        const savedCourse = await this.courseRepo.save(course);
-
-        if (data.tag_names && data.tag_names.length > 0) {
-            await this.assignTagsByName(savedCourse.course_id, data.tag_names);
-        }
-
-        return savedCourse;
-    }
+    @InjectRepository(CourseTagMapping)
+    private readonly mapRepo: Repository<CourseTagMapping>,
+  ) {}
 
 
-    async assignTagsByName(courseId: number, tagNames: string[]) {
-        const course = await this.courseRepo.findOne({
-            where: { course_id: courseId }
-        });
-
-        if (!course) throw new NotFoundException('Course not found');
-
-        await this.mapRepo.delete({ course: { course_id: courseId } });
-
-        const tagIds: number[] = [];
-
-        for (const tagName of tagNames) {
-            let tag = await this.tagRepo.findOne({
-                where: { tag_name: tagName }
-            });
-
-            if (!tag) {
-                tag = await this.tagRepo.save(
-                    this.tagRepo.create({ tag_name: tagName })
-                );
-            }
-
-            tagIds.push(tag.tag_id);
-        }
-
-        const mappings = tagIds.map(tagId =>
-            this.mapRepo.create({
-                course: { course_id: courseId },
-                tag: { tag_id: tagId }
-            })
-        );
-        return this.mapRepo.save(mappings);
-    }
-
-    async getCourse(courseId: number) {
-        return this.courseRepo.findOne({
-            where: { course_id: courseId },
-            relations: ['created_by_user', 'course_tag_map', 'course_tag_map.tag'],
-        });
-    }
-
-//     async getCourse(courseId: number) {
-//   const course = await this.courseRepo.findOne({
-//     where: { course_id: courseId },
-//     relations: ['lectures'],
-//   });
-
-  async getCourseById(courseId: number) {
-    const course = await this.courseRepo.findOne({
-      where: { course_id: courseId },
-      relations: ['lectures', 'created_by_user'],
+  async createCourse(dto: CreateCourseDto, userId: number) {
+    const course = this.courseRepo.create({
+      ...dto,
+      created_by_user: { user_id: userId },
     });
-    if (!course) throw new NotFoundException('Lecture not found');
-    return course.lectures;
+
+    const savedCourse = await this.courseRepo.save(course);
+
+    if (dto.tag_names?.length) {
+      await this.assignTags(savedCourse.course_id, dto.tag_names);
+    }
+
+    return savedCourse;
   }
 
+  private async assignTags(courseId: number, tagNames: string[]) {
+    await this.mapRepo.delete({ course: { course_id: courseId } });
 
-    async updateCourse(courseId: number, data: UpdateCourseDto, userId: number) {
-        const course = await this.courseRepo.findOne({
-            where: { course_id: courseId },
-            relations: ['created_by_user'],
-        });
+    for (const name of tagNames) {
+      let tag = await this.tagRepo.findOne({ where: { tag_name: name } });
 
-        if (!course) throw new NotFoundException('Course not found');
+      if (!tag) {
+        tag = await this.tagRepo.save(
+          this.tagRepo.create({ tag_name: name }),
+        );
+      }
 
-        if (course.created_by_user.user_id !== userId)
-            throw new ForbiddenException('You are not allowed to update this course');
+      await this.mapRepo.save(
+        this.mapRepo.create({
+          course: { course_id: courseId },
+          tag: { tag_id: tag.tag_id },
+        }),
+      );
+    }
+  }
 
-        Object.assign(course, data);
+  async getCourse(courseId: number, userId: number) {
+    const course = await this.courseRepo.findOne({
+      where: {
+        course_id: courseId,
+        created_by_user: { user_id: userId },
+      },
+      relations: ['created_by_user', 'lectures'],
+    });
 
-        const updatedCourse = await this.courseRepo.save(course);
-
-        if (data.tag_names && data.tag_names.length > 0)
-            await this.assignTagsByName(courseId, data.tag_names);
-
-        return updatedCourse;
+    if (!course) {
+      throw new NotFoundException('Course not found or access denied');
     }
 
-    async deleteCourse(courseId: number, userId: number) {
-        const course = await this.courseRepo.findOne({
-            where: { course_id: courseId },
-            relations: ['created_by_user'],
-        });
+    return course;
+  }
 
-        if (!course) throw new NotFoundException('Course not found');
+  async getAllCourses(userId: number){
+    const course = await this.courseRepo.find({
+      where: {
+        created_by_user: { user_id: userId },
+      },
+      relations: ['created_by_user', 'lectures'],
+    });
 
-        if (course.created_by_user.user_id !== userId)
-            throw new ForbiddenException('You cannot delete this course');
-
-        await this.courseRepo.remove(course);
-
-        return { message: 'Course deleted successfully' };
+    if (!course) {
+      throw new NotFoundException('Course not found or access denied');
     }
+
+    return course;
+}
+
+
+  async updateCourse(
+    courseId: number,
+    dto: UpdateCourseDto,
+    userId: number,
+  ) {
+    const course = await this.courseRepo.findOne({
+      where: {
+        course_id: courseId,
+        created_by_user: { user_id: userId },
+      },
+    });
+
+    if (!course) {
+      throw new ForbiddenException('You cannot update this course');
+    }
+
+    Object.assign(course, dto);
+    const updated = await this.courseRepo.save(course);
+
+    if (dto.tag_names?.length) {
+      await this.assignTags(courseId, dto.tag_names);
+    }
+
+    return updated;
+  }
+
+  async deleteCourse(courseId: number, userId: number) {
+    const course = await this.courseRepo.findOne({
+      where: {
+        course_id: courseId,
+        created_by_user: { user_id: userId },
+      },
+    });
+
+    if (!course) {
+      throw new ForbiddenException('You cannot delete this course');
+    }
+
+    await this.courseRepo.remove(course);
+    return { message: 'Course deleted successfully' };
+  }
 }
