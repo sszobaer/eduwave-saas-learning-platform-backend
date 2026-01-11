@@ -1,12 +1,17 @@
+import { IsEmail, IsString, IsOptional } from 'class-validator';
+
 export class SendEmailDto {
   
-  to: string | string[];
 
+  @IsEmail()
+  to: string;
+
+  @IsString()
   subject: string;
 
-  text?: string;
+  @IsString()
+  template: string;
 
-  html?: string;
-
-  from?: string;
+  @IsOptional()
+  context?: Record<string, any>;
 }
