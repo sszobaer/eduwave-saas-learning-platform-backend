@@ -47,11 +47,13 @@ export class AuthService {
             });
             await manager.save(newCredential);
 
+            const isTeacher = role.role_name === 'teacher';
             const newUser = manager.create(User, {
                 full_name: data.full_name,
                 profile_img: data.profile_img,
                 role: role,
                 credential: newCredential,
+                isActive: !isTeacher,
             });
 
             return await manager.save(newUser);

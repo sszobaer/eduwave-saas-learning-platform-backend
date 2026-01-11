@@ -10,7 +10,7 @@ import { AdminEnrollmentService } from 'src/services/Admin/admin-enrollment.serv
 
 @Controller('admin/enrollments')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('admin')
+@Roles('ADMIN')
 export class AdminEnrollmentController {
   constructor(private readonly enrollmentService: AdminEnrollmentService) {}
 

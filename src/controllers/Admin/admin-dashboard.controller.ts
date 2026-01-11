@@ -13,7 +13,7 @@ import { AdminDashboardService } from 'src/services/Admin/admin-dashboard.servic
 
 @Controller('admin')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('admin')
+@Roles('ADMIN')
 export class AdminDashboardController {
   constructor(
     private readonly adminService: AdminDashboardService

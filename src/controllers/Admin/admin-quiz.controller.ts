@@ -12,7 +12,7 @@ import { AdminQuizService } from 'src/services/Admin/admin-quiz.service';
 
 @Controller('admin/quizzes')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('admin')
+@Roles('ADMIN')
 export class AdminQuizController {
   constructor(private readonly quizService: AdminQuizService) {}
 

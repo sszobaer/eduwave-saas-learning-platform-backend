@@ -26,7 +26,7 @@ import { validateOrReject } from 'class-validator';
 
 @Controller('lectures')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('teacher')
+@Roles('TEACHER')
 export class LectureController {
   constructor(private readonly lectureService: LectureService) { }
 
