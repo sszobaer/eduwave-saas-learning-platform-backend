@@ -8,12 +8,13 @@ export class PaymentController {
 
   @Post('create')
   async createPayment(@Body() dto: CreatePaymentDto) {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.paymentService.createPaymentSession(dto);
   }
 
   @Post('success')
   handlePaymentSuccess(@Body() paymentData: any) {
-    const { tran_id, val_id, status, amount, currency } = paymentData;
+    const { tran_id, val_id } = paymentData;
 
     if (!tran_id || !val_id) {
       throw new HttpException('Missing val_id or tran_id', HttpStatus.BAD_REQUEST);
