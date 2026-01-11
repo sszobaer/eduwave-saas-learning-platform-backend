@@ -289,22 +289,23 @@ console.log("Email:", credential.email);
 
 
   
-  if (name?.full_name && credential?.email ) {
+   if (name?.full_name && credential?.email ) {
     const percent = maxMarks > 0 ? ((obtainedMarks / maxMarks) * 100).toFixed(2) : '0';
     console.log("name result:", name.full_name);
     console.log("Email result:", credential.email);
     await this.emailService.sendEmail({
-      to: credential.email,
-      subject: `Your result for quiz: ${saved.quiz.title}`,
-      html: `
-        <p>Hi ${name.full_name || 'Student'},</p>
-        <p>You have completed the quiz <strong>${saved.quiz.title}</strong>.</p>
-        <p><strong>Score:</strong> ${obtainedMarks} / ${maxMarks} (${percent}%)</p>
-        <p>You can log in to EduWave LMS to review your answers and feedback.</p>
-        <p>— EduWave Learning Platform</p>
-      `,
-    });
-  }
+    to: credential.email,
+    subject: `Quiz Result: ${saved.quiz.title}`,
+    template: 'quiz-result',
+    context: {
+      studentName: name.full_name,
+      quizTitle: saved.quiz.title,
+      obtainedMarks,
+      maxMarks,
+      percentage: percent,
+    },
+  });
+}
 
   return saved;
 }
