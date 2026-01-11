@@ -1,8 +1,7 @@
-import { BadRequestException, Body, Controller, Post, UploadedFile, UseInterceptors} from '@nestjs/common';
+import { BadRequestException, Body, Controller, Post, Res, UnauthorizedException, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage, MulterError } from 'multer';
 import { LoginDto } from 'src/dtos/Login/login.dto';
-import { RefreshTokenDto } from 'src/dtos/RefreshToken/refreh-token.dto';
 import { RegisterDto } from 'src/dtos/Register/create-register.dto';
 import { AuthService } from 'src/services/auth.service';
 import { ForgotPasswordDto } from 'src/dtos/ForgotPassword/forgot-password.dto';
@@ -10,6 +9,7 @@ import { ChangePasswordDto } from 'src/dtos/ChangePassword/change-password.dto';
 import { UseGuards, Req } from "@nestjs/common";
 import { AuthGuard } from "src/guards/auth.guard";
 import { ChangePasswordAfterLoginDto } from "src/dtos/ChangePassword/change-password-after-login.dto";
+import type { Response } from 'express';
 
 @Controller('auth')
 export class AuthController {
@@ -42,35 +42,55 @@ export class AuthController {
     }
 
     @Post('login')
-    login(@Body() data:LoginDto){
-       return this.AuthService.login(data);
+    async login(@Body() data: LoginDto, @Res({ passthrough: true }) res: Response) {
+        const result = await this.AuthService.login(data);
+
+        // Set refresh token as HttpOnly cookie
+        res.cookie('refresh_token', result.refresh_token, {
+            httpOnly: true,
+            secure: false,
+            sameSite: 'lax',
+            maxAge: 3 * 24 * 60 * 60 * 1000,
+        });
+        return result;
     }
 
-    @Post('refresh')
-    refresh(@Body() data: RefreshTokenDto){
-        return this.AuthService.refreshTokens(data);
-    }
+@Post('refresh')
+refresh(@Req() req: Request) {
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const cookies = (req as any).cookies; // quick fix
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const refreshToken = cookies['refresh_token'];
+
+  if (!refreshToken) throw new UnauthorizedException();
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  return this.AuthService.refreshTokens({ token: refreshToken });
+}
+
+
+
 
     // Forgot Password: Endpoint to send OTP to email
     @Post('forgot-password')
     async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-    const response = await this.AuthService.forgotPassword(forgotPasswordDto);
-    return response; // Success message: OTP sent to email
+        const response = await this.AuthService.forgotPassword(forgotPasswordDto);
+        return response; // Success message: OTP sent to email
     }
 
     // Change Password: Endpoint to change password after OTP verification
     @Post('change-password')
     async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-    const response = await this.AuthService.changePassword(changePasswordDto);
-    return response; // Success message: Password updated successfully
-  }
+        const response = await this.AuthService.changePassword(changePasswordDto);
+        return response; // Success message: Password updated successfully
+    }
 
-  @Post('change-password-after-login')
-  @UseGuards(AuthGuard)
-  changePasswordAfterLogin(
-  @Req() req,
-  @Body() data: ChangePasswordAfterLoginDto
-  ) {
-  return this.AuthService.changePasswordAfterLogin(req.user.sub, data);
-  }
+    @Post('change-password-after-login')
+    @UseGuards(AuthGuard)
+    changePasswordAfterLogin(
+        @Req() req,
+        @Body() data: ChangePasswordAfterLoginDto
+    ) {
+        return this.AuthService.changePasswordAfterLogin(req.user.sub, data);
+    }
 }
