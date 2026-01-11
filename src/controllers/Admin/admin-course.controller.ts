@@ -15,7 +15,7 @@ import { UpdateCourseDto } from 'src/dtos/Course/update-course.dto';
 
 @Controller('admin/courses')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('admin')
+@Roles('ADMIN')
 export class AdminCourseController {
   constructor(private readonly courseService: AdminCourseService) {}
 

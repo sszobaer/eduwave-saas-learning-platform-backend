@@ -10,7 +10,6 @@ import { Tag } from 'src/entities/course-tags.entity';
 import { CourseTagMapping } from 'src/entities/course-tags-mapping';
 import { CreateCourseDto } from 'src/dtos/Course/create-course.dto';
 import { UpdateCourseDto } from 'src/dtos/Course/update-course.dto';
-import { promises } from 'dns';
 
 @Injectable()
 export class CourseService {

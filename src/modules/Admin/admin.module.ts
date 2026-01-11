@@ -18,11 +18,13 @@ import { AdminEnrollmentService } from "src/services/Admin/admin-enrollment.serv
 import { AdminQuizService } from "src/services/Admin/admin-quiz.service";
 import { Enrollment } from "src/entities/enrollment.entity";
 import { AdminLectureService } from "src/services/Admin/admin-lecture.service";
+import { TeacherApprovalController } from "src/controllers/Admin/teacher-approval.controller";
+import { TeacherApprovalService } from "src/services/Admin/teacher-approval.service";
 
 @Module({
     imports: [TypeOrmModule.forFeature([User, Course, Lecture, Quiz, Enrollment]), AuthModule],
-    controllers: [AdminDashboardController, AdminCourseController, AdminEnrollmentController, AdminLectureController, AdminQuizController],
-    providers: [AdminDashboardService, AdminCourseService, AdminEnrollmentService, AdminQuizService, AdminLectureService, RolesGuard, AuthGuard]
+    controllers: [AdminDashboardController, AdminCourseController, AdminEnrollmentController, AdminLectureController, AdminQuizController, TeacherApprovalController],
+    providers: [AdminDashboardService, AdminCourseService, AdminEnrollmentService, AdminQuizService, AdminLectureService, TeacherApprovalService, RolesGuard, AuthGuard]
 })
 
 export class AdminDashboardModule { }

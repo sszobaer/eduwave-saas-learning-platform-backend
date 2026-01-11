@@ -12,7 +12,7 @@ import { AdminLectureService } from 'src/services/Admin/admin-lecture.service';
 
 @Controller('admin/lectures')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('admin')
+@Roles('ADMIN')
 export class AdminLectureController {
   constructor(private readonly lectureService: AdminLectureService) {}
 

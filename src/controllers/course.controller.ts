@@ -11,7 +11,7 @@ import { CourseService } from "src/services/course.service";
 
 @Controller('courses')
 @UseGuards(AuthGuard, RolesGuard)
-@Roles('teacher', 'admin')
+@Roles('TEACHER', 'ADMIN')
 export class CourseController {
     constructor(private readonly courseService: CourseService) { }
 
