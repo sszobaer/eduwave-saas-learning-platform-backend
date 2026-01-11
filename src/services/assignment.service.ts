@@ -6,7 +6,6 @@ import { User } from 'src/entities/user.entity';
 import { Course } from 'src/entities/course.entity';
 import { Enrollment } from 'src/entities/enrollment.entity';
 import { CreateAssignmentDto, UpdateAssignmentDto } from 'src/dtos/Assignment/assignment.dto';
-import { MailerService } from '@nestjs-modules/mailer';
 import { InjectRepository } from '@nestjs/typeorm';
 import { EmailService } from './email.service';
 
@@ -18,7 +17,6 @@ export class AssignmentService {
   @InjectRepository(Course) private courseRepo: Repository<Course>,
   @InjectRepository(Enrollment) private enrollmentRepo: Repository<Enrollment>,
   private readonly emailService: EmailService,
-  private mailerService: MailerService,
 ) {}
 
 
@@ -61,11 +59,12 @@ export class AssignmentService {
     await this.emailService.sendEmail({
       to: email,
       subject: `New Assignment: ${assignment.title}`,
-      text: `Hi ${student.full_name},\nA new assignment "${assignment.title}" has been created for course "${course.title}"`,
-      html: `<p>Hi <strong>${student.full_name}</strong>,</p>
-             <p>A new assignment "<strong>${assignment.title}</strong>" has been created for course "<strong>${course.title}</strong>".</p>
-             <p>Due date: ${assignment.due_date}</p>`,
-      from: '"EduWave LMS Platform" <no-reply@yourapp.com>',
+      template: 'assignment',
+            context: {
+                name: enrollment.student.full_name,
+                title: assignment.title,
+                due_date: assignment.due_date
+            },
     }).catch(err => console.error('Email sending failed:', err));
   }
     return await this.assignmentRepo.save(assignment);

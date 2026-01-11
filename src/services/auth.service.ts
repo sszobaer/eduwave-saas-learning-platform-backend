@@ -52,7 +52,7 @@ private otpCache: { [email: string]: { otp: string, expiresAt: number } } = {}; 
             });
             await manager.save(newCredential);
 
-            const isTeacher = role.role_name === 'teacher';
+            const isTeacher = role.role_name === 'TEACHER';
             const newUser = manager.create(User, {
                 full_name: data.full_name,
                 profile_img: data.profile_img,
