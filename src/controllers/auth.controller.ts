@@ -9,65 +9,65 @@ import { ChangePasswordDto } from 'src/dtos/ChangePassword/change-password.dto';
 import { UseGuards, Req } from "@nestjs/common";
 import { AuthGuard } from "src/guards/auth.guard";
 import { ChangePasswordAfterLoginDto } from "src/dtos/ChangePassword/change-password-after-login.dto";
-import type { Response } from 'express';
+import type { Response, Request } from 'express';
 
+interface RequestWithCookies extends Request {
+  cookies: { [key: string]: string };
+}
 @Controller('auth')
 export class AuthController {
     constructor(private readonly AuthService: AuthService) { }
 
-    @Post('register')
-    @UseInterceptors(
-        FileInterceptor('profile_img', {
-            fileFilter: (req, file, cb) => {
-                if (file.originalname.match(/^.*\.(jpg|jpeg|png|webp)$/)) cb(null, true);
-                else cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'profile_img'), false);
-            },
-            limits: { fileSize: 2 * 1024 * 1024 },
-            storage: diskStorage({
-                destination: './uploads',
-                filename: (req, file, cb) => {
-                    cb(null, Date.now() + '-' + file.originalname);
-                },
-            }),
-        }),
-    )
-    register(
-        @UploadedFile() file: Express.Multer.File,
-        @Body() data: RegisterDto
-    ) {
-        if (!file) throw new BadRequestException('Profile image is required');
+   @Post('register')
+  @UseInterceptors(
+    FileInterceptor('profile_img', {
+      fileFilter: (req, file, cb) => {
+        if (file.originalname.match(/^.*\.(jpg|jpeg|png|webp)$/)) cb(null, true);
+        else cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'profile_img'), false);
+      },
+      limits: { fileSize: 2 * 1024 * 1024 },
+      storage: diskStorage({
+        destination: './uploads',
+        filename: (req, file, cb) => {
+          cb(null, Date.now() + '-' + file.originalname);
+        },
+      }),
+    }),
+  )
+  register(@UploadedFile() file: Express.Multer.File, @Body() data: RegisterDto) {
+    if (!file) throw new BadRequestException('Profile image is required');
 
-        data.profile_img = `/uploads/${file.filename}`;
-        return this.AuthService.register(data);
+    data.profile_img = `/uploads/${file.filename}`;
+    return this.AuthService.register(data);
+  }
+
+
+  @Post('login')
+  async login(@Body() data: LoginDto, @Res({ passthrough: true }) res: Response) {
+    const result = await this.AuthService.login(data);
+
+    // Set refresh token in HttpOnly cookie
+    res.cookie('refresh_token', result.refresh_token, {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+      maxAge: 3 * 24 * 60 * 60 * 1000, 
+    });
+
+    return result; 
+  }
+
+
+  @Post('refresh')
+  refresh(@Req() req: RequestWithCookies) {
+    const refreshToken = req.cookies?.refresh_token;
+
+    if (!refreshToken) {
+      throw new UnauthorizedException('No refresh token');
     }
 
-    @Post('login')
-    async login(@Body() data: LoginDto, @Res({ passthrough: true }) res: Response) {
-        const result = await this.AuthService.login(data);
-
-        // Set refresh token as HttpOnly cookie
-        res.cookie('refresh_token', result.refresh_token, {
-            httpOnly: true,
-            secure: false,
-            sameSite: 'lax',
-            maxAge: 3 * 24 * 60 * 60 * 1000,
-        });
-        return result;
-    }
-
-@Post('refresh')
-refresh(@Req() req: Request) {
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const cookies = (req as any).cookies; // quick fix
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  const refreshToken = cookies['refresh_token'];
-
-  if (!refreshToken) throw new UnauthorizedException();
-
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-  return this.AuthService.refreshTokens({ token: refreshToken });
-}
-
+    return this.AuthService.refreshTokens({ token: refreshToken });
+  }
 
 
 

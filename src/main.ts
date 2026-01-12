@@ -3,6 +3,7 @@ import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { join } from 'path';
 import { NestExpressApplication } from '@nestjs/platform-express';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create<NestExpressApplication>(AppModule);
@@ -19,8 +20,10 @@ async function bootstrap() {
     prefix: '/uploads/',
   });
 
+  app.use(cookieParser());
+
   app.enableCors({
-    origin: 'http://localhost:4000', 
+    origin: 'http://localhost:3001', 
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
     credentials: true,
   });
