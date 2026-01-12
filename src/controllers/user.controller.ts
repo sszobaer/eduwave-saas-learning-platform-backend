@@ -1,4 +1,5 @@
 import { Body, Controller, Get, Delete, Param, ParseIntPipe, Put, Req, UseGuards } from "@nestjs/common";
+import { Request } from "express";
 import { Roles } from "src/decorators/roles.decorator";
 
 import { UpdateUserDto } from "src/dtos/User/update-user.dto";
@@ -6,8 +7,12 @@ import { AuthGuard } from "src/guards/auth.guard";
 import { RolesGuard } from "src/guards/role.guard";
 import { UserService } from "src/services/user.service";
 
+interface RequestWithUser extends Request {
+    user: { sub: number; role: string };
+}
 @Controller('user')
 export class UserController {
+    authService: any;
     constructor(private readonly UserService: UserService) { }
 
     @UseGuards(AuthGuard, RolesGuard)
@@ -17,6 +22,13 @@ export class UserController {
         console.log("Logged in user", req.user);
         return this.UserService.findAll();
     }
+
+    @Get('me')
+    @UseGuards(AuthGuard)
+    async getMe(@Req() req: RequestWithUser) {
+        return this.UserService.findOne(req.user.sub);
+    }
+
 
     @UseGuards(AuthGuard, RolesGuard)
     @Roles('ADMIN')

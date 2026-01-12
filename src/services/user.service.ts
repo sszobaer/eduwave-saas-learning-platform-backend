@@ -70,12 +70,16 @@ export class UserService {
 }
 
     async findOne(id: number): Promise<User> {
-        const user = await this.userRepo.findOneBy({ user_id: id });
+    const user = await this.userRepo.findOne({
+        where: { user_id: id },
+        relations: ['role', 'credential'], // include role & email
+    });
 
-        if (!user) throw new BadRequestException(`No roles with this ${id} exist`);
+    if (!user) throw new BadRequestException(`No user with ID ${id} found`);
 
-        return user;
-    }
+    return user;
+}
+
 
     async remove(id: number): Promise<void>{
         const response = await this.userRepo.delete(id);
