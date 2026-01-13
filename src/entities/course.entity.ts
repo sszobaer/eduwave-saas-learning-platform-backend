@@ -31,19 +31,19 @@ export class Course {
   @OneToMany(() => Payment, (payment) => payment.course)
   payments: Payment[];
 
-  @OneToMany(() => Quiz, (quiz) => quiz.course)
+  @OneToMany(() => Quiz, (quiz) => quiz.course, { onDelete: 'CASCADE' })
   quizzes: Quiz[];
 
-  @OneToMany(() => Enrollment, (enrollment) => enrollment.course)
+  @OneToMany(() => Enrollment, (enrollment) => enrollment.course, { onDelete: 'CASCADE' })
   enrollments: Enrollment[];
 
-  @OneToMany(() => CourseTagMapping, (mapping) => mapping.course)
+  @OneToMany(() => CourseTagMapping, (mapping) => mapping.course, { onDelete: 'CASCADE' })
   tagMappings: CourseTagMapping[];
 
-  @OneToMany(() => Lecture, (lecture) => lecture.course)
+  @OneToMany(() => Lecture, (lecture) => lecture.course, { onDelete: 'CASCADE' })
   lectures: Lecture[];
 
-  @OneToMany(() => Assignment, (assignment) => assignment.course)
+  @OneToMany(() => Assignment, (assignment) => assignment.course, { onDelete: 'CASCADE' })
   assignments: Assignment[];
 
 

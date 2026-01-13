@@ -10,18 +10,23 @@ import { RolesGuard } from "src/guards/role.guard";
 import { CourseService } from "src/services/course.service";
 
 @Controller('courses')
-@UseGuards(AuthGuard, RolesGuard)
-@Roles('TEACHER', 'ADMIN')
 export class CourseController {
     constructor(private readonly courseService: CourseService) { }
 
+    @Get("all")
+    async getAllCourses() {
+        return await this.courseService.getAllCourses();
+    }
+
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('TEACHER', 'ADMIN')
     @Post('create')
     @UseGuards(AuthGuard)
     @UseInterceptors(
-        FileInterceptor('thumbnail', {
+        FileInterceptor('thumbnail_url', {
             fileFilter: (req, file, cb) => {
-                if (file.originalname.match(/^.*\.(jpg|jpeg|png|webp)$/)) cb(null, true);
-                else cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'thumbnail'), false);
+                if (file.originalname.match(/^.*\.(JPG|jpg|jpeg|png|webp)$/)) cb(null, true);
+                else cb(new MulterError('LIMIT_UNEXPECTED_FILE', 'thumbnail_url'), false);
             },
             limits: { fileSize: 2 * 1024 * 1024 },
             storage: diskStorage({
@@ -44,7 +49,8 @@ export class CourseController {
         return this.courseService.createCourse(data, user.sub);
     }
 
-
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('TEACHER', 'ADMIN')
     @Patch('update/:id')
     @UseInterceptors(
         FileInterceptor('thumbnail', {
@@ -73,25 +79,30 @@ export class CourseController {
 
         return this.courseService.updateCourse(id, data, user.sub);
     }
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('TEACHER', 'ADMIN')
 
     @Get(':id')
     async getCourseById(@Param('id') id: number, @GetUser() user: any) {
         return this.courseService.getCourse(id, user.sub);
     }
 
-    @Get()
-    async getAllCourses(@GetUser() user: any) {
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('TEACHER', 'ADMIN')
+    @Get("indivisual")
+    async getAllCoursesByIndivisualUser(@GetUser() user: any) {
         // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return await this.courseService.getAllCourses(user.sub);
+        return await this.courseService.getAllCoursesByIndivisualUser(user.sub);
     }
 
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('TEACHER', 'ADMIN')
     @Delete('delete/:id')
     deleteCourse(
         @Param('id') id: number,
         @GetUser() user: any,
     ) {
-        return this.courseService.deleteCourse(Number(id), user.sub);
+        return this.courseService.deleteCourseByCreator(Number(id), user.sub);
     }
-
 
 }
