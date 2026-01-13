@@ -39,10 +39,9 @@ export class UserService {
         }
 
     async findAll(): Promise<object> {
-        const users = await this.dataSource.getRepository(User).find({
+        const users = await this.userRepo.find({
         relations: ['role', 'credential'],
-        order: { user_id: 'DESC' },
-        select: ['user_id']
+        order: { user_id: 'DESC' }
     });
 
     if (!users.length) throw new BadRequestException('No users found');
@@ -52,21 +51,17 @@ export class UserService {
         user_id: user.user_id,
         full_name: user.full_name,
         profile_img: user.profile_img,
-        
+        isActive: user.isActive,
         role: {
             role_id: user.role.role_id,
             role_name: user.role.role_name,
         },
-
         credential: {
             email: user.credential.email,
         }
     }));
 
-    return { 
-        //total: users.length,
-        data: response 
-        };
+    return response;
 }
 
     async findOne(id: number): Promise<User> {
@@ -80,6 +75,48 @@ export class UserService {
     return user;
 }
 
+async blockUser(userId: number) {
+    const user = await this.userRepo.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    if (!user.isActive) {
+      throw new BadRequestException('User already blocked');
+    }
+
+    user.isActive = false;
+    await this.userRepo.save(user);
+
+    return {
+      message: 'User blocked successfully',
+      user_id: user.user_id,
+      isActive: user.isActive,
+    };
+  }
+
+  // Unblock user
+  async unblockUser(userId: number) {
+    const user = await this.userRepo.findOne({
+      where: { user_id: userId },
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    user.isActive = true;
+    await this.userRepo.save(user);
+
+    return {
+      message: 'User unblocked successfully',
+      user_id: user.user_id,
+      isActive: user.isActive,
+    };
+  }
 
     async remove(id: number): Promise<void>{
         const response = await this.userRepo.delete(id);
