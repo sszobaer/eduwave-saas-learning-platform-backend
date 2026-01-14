@@ -5,7 +5,8 @@ import { LoginDto } from 'src/dtos/Login/login.dto';
 import { RegisterDto } from 'src/dtos/Register/create-register.dto';
 import { AuthService } from 'src/services/auth.service';
 import { ForgotPasswordDto } from 'src/dtos/ForgotPassword/forgot-password.dto';
-import { ChangePasswordDto } from 'src/dtos/ChangePassword/change-password.dto';
+import { VerifyOtpDto } from 'src/dtos/VerifyOtp/verify-oto.dto';
+import { ResetPasswordDto } from 'src/dtos/ResetPassword/reset-password.dto';
 import { UseGuards, Req } from "@nestjs/common";
 import { AuthGuard } from "src/guards/auth.guard";
 import { ChangePasswordAfterLoginDto } from "src/dtos/ChangePassword/change-password-after-login.dto";
@@ -78,10 +79,17 @@ export class AuthController {
         return response; // Success message: OTP sent to email
     }
 
+    // OTP Verification
+    @Post('verify-otp')
+    async verifyOtp(@Body() otpDto: VerifyOtpDto) {
+        const response = await this.AuthService.verifyOtp(otpDto);
+        return response; // Success message: OTP verified successfully
+    }
+
     // Change Password: Endpoint to change password after OTP verification
-    @Post('change-password')
-    async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-        const response = await this.AuthService.changePassword(changePasswordDto);
+    @Post('reset-password')
+    async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
+        const response = await this.AuthService.resetPassword(resetPasswordDto);
         return response; // Success message: Password updated successfully
     }
 
