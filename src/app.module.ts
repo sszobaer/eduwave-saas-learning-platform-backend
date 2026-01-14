@@ -19,7 +19,7 @@ import { AdminDashboardModule } from './modules/Admin/admin.module';
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true}),
+    ConfigModule.forRoot({ isGlobal: true }),
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],
@@ -33,11 +33,14 @@ import { AdminDashboardModule } from './modules/Admin/admin.module';
         autoLoadEntities: true,
         synchronize: true,
         logging: true,
+        extra: { 
+          max: 10,
+        }
+      }),
     }),
-  }),
     AuthModule,
-    UserModule, 
-    RoleModule,  
+    UserModule,
+    RoleModule,
     EmailModule,
     QuizzesModule,
     QuizAttemptsModule,

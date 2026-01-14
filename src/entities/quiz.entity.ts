@@ -10,7 +10,7 @@ export class Quiz {
   @PrimaryGeneratedColumn({ name: 'quiz_id' })
   quizId: number;
 
-  @ManyToOne(() => Course, (course) => course.quizzes, { eager: true })
+  @ManyToOne(() => Course, (course) => course.quizzes, { eager: true, onDelete: 'CASCADE' }) 
   @JoinColumn({ name: 'course_id' })
   course: Course;
 

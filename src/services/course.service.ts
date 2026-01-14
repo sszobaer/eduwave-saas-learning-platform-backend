@@ -77,7 +77,7 @@ export class CourseService {
     return course;
   }
 
-  async getAllCourses(userId: number){
+  async getAllCoursesByIndivisualUser(userId: number){
     const course = await this.courseRepo.find({
       where: {
         created_by_user: { user_id: userId },
@@ -89,6 +89,17 @@ export class CourseService {
       throw new NotFoundException('Course not found or access denied');
     }
 
+    return course;
+}
+async getAllCourses(){
+    const course = await this.courseRepo.find({
+      relations: ['created_by_user', 'lectures'],
+      order: { course_id: 'DESC' },
+    });
+
+    if (!course) {
+      throw new NotFoundException('Course not found or access denied');
+    }
     return course;
 }
 
@@ -119,7 +130,7 @@ export class CourseService {
     return updated;
   }
 
-  async deleteCourse(courseId: number, userId: number) {
+  async deleteCourseByCreator(courseId: number, userId: number) {
     const course = await this.courseRepo.findOne({
       where: {
         course_id: courseId,
@@ -134,4 +145,5 @@ export class CourseService {
     await this.courseRepo.remove(course);
     return { message: 'Course deleted successfully' };
   }
+
 }
