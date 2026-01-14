@@ -87,9 +87,9 @@ export class AuthController {
     }
 
     // Change Password: Endpoint to change password after OTP verification
-    @Post('change-password')
-    async changePassword(@Body() changePasswordDto: ChangePasswordDto) {
-        const response = await this.AuthService.changePassword(changePasswordDto);
+    @Post('reset-password')
+    async changePassword(@Body() resetPasswordDto: ResetPasswordDto) {
+        const response = await this.AuthService.resetPassword(resetPasswordDto);
         return response; // Success message: Password updated successfully
     }
 
