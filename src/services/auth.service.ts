@@ -13,7 +13,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { RefreshTokenDto } from 'src/dtos/RefreshToken/refreh-token.dto';
 import { EmailService } from './email.service';
 import { ForgotPasswordDto } from 'src/dtos/ForgotPassword/forgot-password.dto';
-import { ChangePasswordDto } from 'src/dtos/ChangePassword/change-password.dto';
+import { VerifyOtpDto } from 'src/dtos/VerifyOtp/verify-oto.dto';
+import { ResetPasswordDto } from 'src/dtos/ResetPassword/reset-password.dto';
 import { ChangePasswordAfterLoginDto } from "src/dtos/ChangePassword/change-password-after-login.dto";
 
 
@@ -190,60 +191,51 @@ private otpCache: { [email: string]: { otp: string, expiresAt: number } } = {}; 
         return { message: 'OTP sent to your email.' };
     }
 
-    // Change Password: Validate OTP and update password
-    async changePassword(data: ChangePasswordDto): Promise<object> {
-        const { email, otp, newPassword } = data;
-
-        // Validate OTP
+        
+    // Verify OTP
+    async verifyOtp(otpDto: VerifyOtpDto): Promise<object> {
+        const { email, otp } = otpDto;
+        
         const storedOtp = this.validateOtp(email, otp);
         if (!storedOtp) throw new BadRequestException('Invalid or expired OTP');
-
-         // Hash the new password
-         const saltRound = 10;
-         const hashedPassword = await bcrypt.hash(newPassword, saltRound);
-
-         // Update the password
-         const userCredential = await this.credentialRepo.findOne({
-         where: { email },
-         relations: ['user'],
-        });
-
-        if (!userCredential) throw new BadRequestException('User not found.');
-
-         userCredential.password = hashedPassword;
-         await this.credentialRepo.save(userCredential);
-
-         // Clear OTP after use
-         this.clearOtp(email);
-
-         return { message: 'Password updated successfully.' };
-        }
-
-        // Utility: Generate a 6-digit OTP
-        private generateOtp(): string {
-        return Math.floor(100000 + Math.random() * 900000).toString();
-        }
-
-        // Store OTP temporarily (in-memory or a cache solution like Redis)
-        private storeOtp(email: string, otp: string, expiresAt: number) {
-        this.otpCache[email] = { otp, expiresAt };
-        }
-
-        // Validate OTP (check expiration and correctness)
-        private validateOtp(email: string, otp: string): boolean {
-        const otpEntry = this.otpCache[email];
-        if (!otpEntry) return false;
-
-          if (otpEntry.otp !== otp || Date.now() > otpEntry.expiresAt) {
-           return false;
-          }
-         return true;
-        }
-
-        // Clear OTP after use
-        private clearOtp(email: string) {
-        delete this.otpCache[email];
+        
+          const resetToken = this.jwtService.sign(
+          { email },
+          { expiresIn: "10m" }
+          );
+        return { resetToken };
     }
+
+
+    async resetPassword(data: ResetPasswordDto): Promise<object> {
+        const { resetToken, newPassword } = data;
+
+        // Validate the resetToken
+        try {
+          const decoded = this.jwtService.verify(resetToken);
+          const email = decoded.email;
+
+          // Hash the new password
+          const saltRound = 10;
+          const hashedPassword = await bcrypt.hash(newPassword, saltRound);
+
+          // Update the password
+          const userCredential = await this.credentialRepo.findOne({
+              where: { email },
+              relations: ['user'],
+            });
+
+          if (!userCredential) throw new BadRequestException('User not found.');
+
+          userCredential.password = hashedPassword;
+          await this.credentialRepo.save(userCredential);
+
+          return { message: 'Password updated successfully.' };
+        } catch (error) {
+         throw new BadRequestException('Invalid or expired reset token.');
+        }
+    }
+
 
     async changePasswordAfterLogin(
         userId: number, data: ChangePasswordAfterLoginDto) {
@@ -275,7 +267,34 @@ private otpCache: { [email: string]: { otp: string, expiresAt: number } } = {}; 
                      date: new Date().toLocaleString(),
                     },
                 });
-             return { message: "Password changed successfully" };
+            return { message: "Password changed successfully" };
     }
+
+
+        // Utility: Generate a 6-digit OTP
+        private generateOtp(): string {
+         return Math.floor(100000 + Math.random() * 900000).toString();
+        }
+
+        // Store OTP temporarily (in-memory or a cache solution like Redis)
+        private storeOtp(email: string, otp: string, expiresAt: number) {
+         this.otpCache[email] = { otp, expiresAt };
+        }
+
+        // Validate OTP (check expiration and correctness)
+        private validateOtp(email: string, otp: string): boolean {
+         const otpEntry = this.otpCache[email];
+         if (!otpEntry) return false;
+
+          if (otpEntry.otp !== otp || Date.now() > otpEntry.expiresAt) {
+           return false;
+          }
+         return true;
+        }
+
+        // Clear OTP after use
+        private clearOtp(email: string) {
+         delete this.otpCache[email];
+        }
 
 }
