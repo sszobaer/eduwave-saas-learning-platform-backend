@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from "@nestjs/config";
 import { RefreshToken } from "src/entities/refresh-token.entity";
 import { AuthGuard } from "src/guards/auth.guard";
 import { User } from "src/entities/user.entity";
+import { PusherService } from "src/services/pusher.service";
 
 @Module({
   imports: [
@@ -26,8 +27,8 @@ import { User } from "src/entities/user.entity";
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService, AuthGuard], 
-  exports: [AuthService, AuthGuard, JwtModule],  
+  providers: [AuthService, AuthGuard, PusherService], 
+  exports: [AuthService, AuthGuard, JwtModule, PusherService],  
 })
 export class AuthModule {}
 
