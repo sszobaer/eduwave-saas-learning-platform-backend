@@ -40,7 +40,7 @@ export class UserService {
 
     async findAll(): Promise<object> {
         const users = await this.userRepo.find({
-        relations: ['role', 'credential', 'enrollment'],
+        relations: ['role', 'credential'],
         order: { user_id: 'DESC' }
     });
 
