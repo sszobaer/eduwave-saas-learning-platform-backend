@@ -1,4 +1,4 @@
-import { IsEmail, IsString, IsNotEmpty, Matches } from 'class-validator';
+import { IsEmail, IsString, IsNotEmpty } from 'class-validator';
 
 // OTP Verification DTO
 export class VerifyOtpDto {

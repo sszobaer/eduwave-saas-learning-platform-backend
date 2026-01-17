@@ -17,9 +17,9 @@ interface RequestWithCookies extends Request {
 }
 @Controller('auth')
 export class AuthController {
-    constructor(private readonly AuthService: AuthService) { }
+  constructor(private readonly AuthService: AuthService) { }
 
-   @Post('register')
+  @Post('register')
   @UseInterceptors(
     FileInterceptor('profile_img', {
       fileFilter: (req, file, cb) => {
@@ -52,10 +52,10 @@ export class AuthController {
       httpOnly: true,
       sameSite: 'lax',
       secure: process.env.NODE_ENV === 'production',
-      maxAge: 3 * 24 * 60 * 60 * 1000, 
+      maxAge: 3 * 24 * 60 * 60 * 1000,
     });
 
-    return result; 
+    return result;
   }
 
 
@@ -72,33 +72,46 @@ export class AuthController {
 
 
 
-    // Forgot Password: Endpoint to send OTP to email
-    @Post('forgot-password')
-    async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
-        const response = await this.AuthService.forgotPassword(forgotPasswordDto);
-        return response; // Success message: OTP sent to email
-    }
+  // Forgot Password: Endpoint to send OTP to email
+  @Post('forgot-password')
+  async forgotPassword(@Body() forgotPasswordDto: ForgotPasswordDto) {
+    const response = await this.AuthService.forgotPassword(forgotPasswordDto);
+    return response; // Success message: OTP sent to email
+  }
 
-    // OTP Verification
-    @Post('verify-otp')
-    async verifyOtp(@Body() otpDto: VerifyOtpDto) {
-        const response = await this.AuthService.verifyOtp(otpDto);
-        return response; // Success message: OTP verified successfully
-    }
+  // OTP Verification
+  @Post('verify-otp')
+  async verifyOtp(@Body() otpDto: VerifyOtpDto) {
+    const response = await this.AuthService.verifyOtp(otpDto);
+    return response; // Success message: OTP verified successfully
+  }
 
-    // Change Password: Endpoint to change password after OTP verification
-    @Post('reset-password')
-    async resetPassword(@Body() resetPasswordDto: ResetPasswordDto) {
-        const response = await this.AuthService.resetPassword(resetPasswordDto);
-        return response; // Success message: Password updated successfully
-    }
+    
+  // Change Password: Endpoint to change password after OTP verification
+  @Post('reset-password')
+  async changePassword(@Body() resetPasswordDto: ResetPasswordDto) {
+    const response = await this.AuthService.resetPassword(resetPasswordDto);
+    return response; // Success message: Password updated successfully
+  }
 
-    @Post('change-password-after-login')
-    @UseGuards(AuthGuard)
-    changePasswordAfterLogin(
-        @Req() req,
-        @Body() data: ChangePasswordAfterLoginDto
-    ) {
-        return this.AuthService.changePasswordAfterLogin(req.user.sub, data);
-    }
+  @Post('change-password-after-login')
+  @UseGuards(AuthGuard)
+  changePasswordAfterLogin(
+    @Req() req,
+    @Body() data: ChangePasswordAfterLoginDto
+  ) {
+    return this.AuthService.changePasswordAfterLogin(req.user.sub, data);
+  }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('refresh_token', {
+      httpOnly: true,
+      sameSite: 'lax',
+      secure: process.env.NODE_ENV === 'production',
+    });
+
+    return { message: 'Logout successful' };
+  }
+
 }
