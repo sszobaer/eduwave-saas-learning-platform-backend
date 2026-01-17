@@ -16,6 +16,8 @@ import { LectureModule } from './modules/lecture.module';
 import { PaymentModule } from './modules/payment.module';
 import { AssignmentModule } from './modules/assignment.module';
 import { AdminDashboardModule } from './modules/Admin/admin.module';
+import { TeacherModule} from "./modules/Teacher/teacher.module";
+import { CourseReviewModule } from './modules/course-review.module';
 
 @Module({
   imports: [
@@ -52,7 +54,9 @@ import { AdminDashboardModule } from './modules/Admin/admin.module';
     LectureModule,
     PaymentModule,
     AssignmentModule,
-    AdminDashboardModule
+    AdminDashboardModule,
+    TeacherModule,
+    CourseReviewModule
   ],
   controllers: [],
   providers: [],

@@ -86,6 +86,7 @@ export class AuthController {
     return response; // Success message: OTP verified successfully
   }
 
+    
   // Change Password: Endpoint to change password after OTP verification
   @Post('reset-password')
   async changePassword(@Body() resetPasswordDto: ResetPasswordDto) {

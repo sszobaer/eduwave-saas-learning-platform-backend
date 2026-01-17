@@ -10,6 +10,7 @@ import { Payment } from "./payment.entity";
 import { Lecture } from "./lecture.entity";
 import { Assignment } from "./assignment.entity";
 import { AssignmentSubmission } from "./assignment-submissions.entity";
+import { CourseReview } from "./course-review.entity";
 
 @Entity('user')
 export class User {
@@ -60,6 +61,9 @@ export class User {
 
     @OneToMany(() => AssignmentSubmission, (submission) => submission.student)
     assignment_submissions: AssignmentSubmission[];
+
+    @OneToMany(() => CourseReview, (review) => review.user)
+    courseReviews: CourseReview[];
 
 
     @CreateDateColumn({ type: 'timestamp' })

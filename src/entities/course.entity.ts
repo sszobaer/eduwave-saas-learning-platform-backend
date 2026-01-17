@@ -6,6 +6,7 @@ import { Enrollment } from './enrollment.entity';
 import { CourseTagMapping } from './course-tags-mapping';
 import { Lecture } from './lecture.entity';
 import { Assignment } from './assignment.entity';
+import { CourseReview } from './course-review.entity';
 
 @Entity('course')
 export class Course {
@@ -45,6 +46,9 @@ export class Course {
 
   @OneToMany(() => Assignment, (assignment) => assignment.course, { onDelete: 'CASCADE' })
   assignments: Assignment[];
+
+  @OneToMany(() => CourseReview, (review) => review.course)
+  reviews: CourseReview[];
 
 
   @CreateDateColumn()
