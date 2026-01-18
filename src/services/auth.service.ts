@@ -176,7 +176,6 @@ export class AuthService {
         };
     }
 
-
     async storeRefreshToken(token: string, user: User) {
         const expiresAt = new Date();
         expiresAt.setDate(expiresAt.getDate() + 3);

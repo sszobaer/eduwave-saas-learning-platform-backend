@@ -77,6 +77,27 @@ export class CourseService {
     return course;
   }
 
+  async getCourseById(courseId: number) {
+    const course = await this.courseRepo.findOne({
+      where: {
+        course_id: courseId
+      },
+      relations: {
+      created_by_user: true,
+      lectures: true,
+      tagMappings: {
+        tag: true,
+      }
+    },
+    });
+
+    if (!course) {
+      throw new NotFoundException('Course not found or access denied');
+    }
+
+    return course;
+  }
+
   async getAllCoursesByIndivisualUser(userId: number){
     const course = await this.courseRepo.find({
       where: {

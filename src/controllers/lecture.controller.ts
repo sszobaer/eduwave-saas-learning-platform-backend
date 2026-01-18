@@ -41,7 +41,7 @@ export class LectureController {
         },
       }),
       fileFilter: (req, file, cb) => {
-        if (file.originalname.match(/\.(mp4|MOV|avi|mkv|webm)$/)) cb(null, true);
+        if (file.originalname.match(/\.(mp4|MOV|mov|avi|mkv|webm)$/)) cb(null, true);
         else cb(new BadRequestException('Only video files are allowed!'), false);
       },
       limits: { fileSize: 500 * 1024 * 1024 },
