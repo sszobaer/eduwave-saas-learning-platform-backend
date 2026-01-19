@@ -22,11 +22,16 @@ import { TeacherApprovalController } from "src/controllers/Admin/teacher-approva
 import { TeacherApprovalService } from "src/services/Admin/teacher-approval.service";
 import { UserService } from "src/services/user.service";
 import { AdminUserController } from "src/controllers/Admin/admin-user.controller";
+import { CourseService } from "src/services/course.service";
+import { CourseReview } from "src/entities/course-review.entity";
+import { CourseTagMapping } from "src/entities/course-tags-mapping";
+import { Payment } from "src/entities/payment.entity";
+import { Tag } from "src/entities/course-tags.entity";
 
 @Module({
-    imports: [TypeOrmModule.forFeature([User, Course, Lecture, Quiz, Enrollment]), AuthModule],
+    imports: [TypeOrmModule.forFeature([User, Course, Lecture, Quiz, Enrollment, CourseReview, CourseTagMapping, Tag, Payment]), AuthModule],
     controllers: [AdminDashboardController, AdminCourseController, AdminEnrollmentController, AdminLectureController, AdminQuizController, AdminUserController, TeacherApprovalController],
-    providers: [AdminDashboardService, AdminCourseService, AdminEnrollmentService, AdminQuizService, AdminLectureService, UserService, TeacherApprovalService, RolesGuard, AuthGuard]
+    providers: [AdminDashboardService, AdminCourseService, AdminEnrollmentService, AdminQuizService, AdminLectureService, UserService, TeacherApprovalService, RolesGuard, CourseService, AuthGuard]
 })
 
 export class AdminDashboardModule { }
