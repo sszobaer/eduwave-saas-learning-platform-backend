@@ -23,10 +23,6 @@
    @IsPositive()
    @Type(() => Number)
    payment_id?: number;
-
-   @IsOptional()
-   @IsDateString()
-   enrolled_at?: string;
    }
 
    export class UpdateEnrollmentDto {

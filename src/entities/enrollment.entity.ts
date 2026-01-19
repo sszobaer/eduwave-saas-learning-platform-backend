@@ -33,7 +33,7 @@ export class Enrollment {
   @JoinColumn({ name: 'payment_id' })
   payment: Payment | null;
 
-  @Column({ type: 'timestamp' })
+ @CreateDateColumn({ type: 'timestamp' })
   enrolled_at: Date;
 
   @CreateDateColumn({ type: 'timestamp' })

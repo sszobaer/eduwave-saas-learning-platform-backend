@@ -29,22 +29,39 @@ export class EnrollmentService {
 
     @InjectRepository(Payment)
     private readonly paymentRepo: Repository<Payment>,
-  ) {}
+  ) { }
 
   async create(dto: CreateEnrollmentDto): Promise<Enrollment> {
-    const { student_user_id, course_id, payment_id, enrolled_at } = dto;
+    const { student_user_id, course_id, payment_id } = dto;
 
     const student = await this.userRepo.findOne({
       where: { user_id: student_user_id },
+      relations: ['enrollments']
     });
+
     if (!student)
       throw new NotFoundException(
         `Student user with id ${student_user_id} not found`,
       );
 
+
+
     const course = await this.courseRepo.findOne({ where: { course_id } });
     if (!course)
       throw new NotFoundException(`Course with id ${course_id} not found`);
+
+    const checkCourse = await this.enrollmentRepo.findOne({
+      where: {
+        course: {
+          course_id: dto.course_id
+        },
+        student: {
+          user_id: dto.student_user_id
+        }
+      },
+      relations: ['course', 'student', 'payment']
+    });
+    if (checkCourse) throw new BadRequestException("Course already enrolled");
 
     let payment: Payment | null = null;
     if (typeof payment_id !== 'undefined' && payment_id !== null) {
@@ -71,7 +88,6 @@ export class EnrollmentService {
     enrollment.student = student;
     enrollment.course = course;
     enrollment.payment = payment ?? null;
-    enrollment.enrolled_at = enrolled_at ? new Date(enrolled_at) : new Date();
 
     return this.enrollmentRepo.save(enrollment);
   }
