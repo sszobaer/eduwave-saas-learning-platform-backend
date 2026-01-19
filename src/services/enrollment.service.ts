@@ -4,7 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, SelectQueryBuilder } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Enrollment } from 'src/entities/enrollment.entity';
 import {
   CreateEnrollmentDto,
@@ -101,7 +101,6 @@ export class EnrollmentService {
     }
 
     return this.enrollmentRepo.find({
-        where,
         relations: ['student', 'course', 'payment'],
         order: { enrolled_at: 'DESC' },
     });

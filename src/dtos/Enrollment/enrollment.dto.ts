@@ -4,10 +4,6 @@
    IsOptional,
    IsPositive,
    IsDateString,
-   IsString,
-   IsIn,
-   Min,
-   Max,
    } from 'class-validator';
    import { Type } from 'class-transformer';
 

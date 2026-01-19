@@ -26,7 +26,7 @@
   export class EnrollmentController {
     constructor(private readonly enrollmentService: EnrollmentService) {}
 
-    @Post()
+    @Post("create")
     async create(@Body() dto: CreateEnrollmentDto) {
       return this.enrollmentService.create(dto);
     }
