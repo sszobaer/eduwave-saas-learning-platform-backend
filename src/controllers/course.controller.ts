@@ -89,7 +89,7 @@ export class CourseController {
     @UseGuards(AuthGuard, RolesGuard)
     @Roles('TEACHER', 'ADMIN')
     @Get(':id')
-    async getCourseById(@Param('id') id: number, @GetUser() user: any) {
+    async getCourseByIdandUser(@Param('id') id: number, @GetUser() user: any) {
         return this.courseService.getCourse(id, user.sub);
     }
 
