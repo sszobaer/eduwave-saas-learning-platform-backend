@@ -75,46 +75,57 @@ export class EnrollmentService {
 
     return this.enrollmentRepo.save(enrollment);
   }
-    async findAll(search: SearchEnrollmentDto): Promise<Enrollment[]> {
+
+  async findAll(search: SearchEnrollmentDto): Promise<Enrollment[]> {
     const where: any = {};
 
     if (search.student_user_id) {
-        where.student = { user_id: search.student_user_id };
+      where.student = { user_id: search.student_user_id };
     }
 
     if (search.course_id) {
-        where.course = { course_id: search.course_id };
+      where.course = { course_id: search.course_id };
     }
 
     if (search.payment_id) {
-        where.payment = { payment_id: search.payment_id };
+      where.payment = { payment_id: search.payment_id };
     }
 
     if (search.start_date || search.end_date) {
-        where.enrolled_at = {};
-        if (search.start_date) {
+      where.enrolled_at = {};
+      if (search.start_date) {
         where.enrolled_at['$gte'] = new Date(search.start_date);
-        }
-        if (search.end_date) {
+      }
+      if (search.end_date) {
         where.enrolled_at['$lte'] = new Date(search.end_date);
-        }
+      }
     }
 
     return this.enrollmentRepo.find({
-        relations: ['student', 'course', 'payment'],
-        order: { enrolled_at: 'DESC' },
+      relations: ['student', 'course', 'payment'],
+      order: { enrolled_at: 'DESC' },
     });
-    }
+  }
 
+  async findOne(id: number): Promise<Enrollment> {
+    const enrollment = await this.enrollmentRepo.findOne({
+      where: { enrollment_id: id },
+      relations: ['student', 'course', 'payment'],
+    });
+    if (!enrollment) throw new NotFoundException(`Enrollment ${id} not found`);
+    return enrollment;
+  }
 
-    async findOne(id: number): Promise<Enrollment> {
-        const enrollment = await this.enrollmentRepo.findOne({
-        where: { enrollment_id: id },
-        relations: ['student', 'course', 'payment'],
-        });
-        if (!enrollment) throw new NotFoundException(`Enrollment ${id} not found`);
-        return enrollment;
-    }
+  // ✅ NEW METHOD: Get all enrollments for a specific student
+  async getStudentEnrollments(studentUserId: number): Promise<Enrollment[]> {
+    const enrollments = await this.enrollmentRepo.find({
+      where: { student: { user_id: studentUserId } },
+      relations: ['course', 'course.created_by_user', 'payment'],
+      order: { enrolled_at: 'DESC' },
+    });
+
+    return enrollments;
+  }
 
   async update(id: number, dto: UpdateEnrollmentDto): Promise<Enrollment> {
     const enrollment = await this.findOne(id);
@@ -163,12 +174,13 @@ export class EnrollmentService {
     return this.enrollmentRepo.save(enrollment);
   }
 
-    async patch(id: number, dto: UpdateEnrollmentDto): Promise<Enrollment> {
-        return this.update(id, dto);
-    }
-    async remove(id: number): Promise<{ deleted: boolean }> {
-        const enrollment = await this.findOne(id);
-        await this.enrollmentRepo.remove(enrollment);
-        return { deleted: true };
-    }
+  async patch(id: number, dto: UpdateEnrollmentDto): Promise<Enrollment> {
+    return this.update(id, dto);
+  }
+
+  async remove(id: number): Promise<{ deleted: boolean }> {
+    const enrollment = await this.findOne(id);
+    await this.enrollmentRepo.remove(enrollment);
+    return { deleted: true };
+  }
 }
