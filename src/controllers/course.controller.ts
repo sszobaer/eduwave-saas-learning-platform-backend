@@ -51,6 +51,14 @@ export class CourseController {
 
     @UseGuards(AuthGuard, RolesGuard)
     @Roles('TEACHER', 'ADMIN')
+    @Get("indivisual")
+    async getAllCoursesByIndivisualUser(@GetUser() user: any) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+        return await this.courseService.getAllCoursesByIndivisualUser(user.sub);
+    }
+
+    @UseGuards(AuthGuard, RolesGuard)
+    @Roles('TEACHER', 'ADMIN')
     @Patch('update/:id')
     @UseInterceptors(
         FileInterceptor('thumbnail', {
@@ -92,13 +100,7 @@ export class CourseController {
         return this.courseService.getCourseById(id);
     }
 
-    @UseGuards(AuthGuard, RolesGuard)
-    @Roles('TEACHER', 'ADMIN')
-    @Get("indivisual")
-    async getAllCoursesByIndivisualUser(@GetUser() user: any) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-return
-        return await this.courseService.getAllCoursesByIndivisualUser(user.sub);
-    }
+    
 
     @UseGuards(AuthGuard, RolesGuard)
     @Roles('TEACHER', 'ADMIN')

@@ -17,4 +17,9 @@ export class CourseReviewController {
   async getCourseReviews(@Param('course_id') course_id: number) {
     return await this.courseReviewService.getCourseReviews(course_id);
   }
+
+  @Get()
+  async getAllReviews() {
+    return await this.courseReviewService.getAllReviews();
+  }
 }
