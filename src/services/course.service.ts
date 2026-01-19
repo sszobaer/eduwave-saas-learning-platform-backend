@@ -103,14 +103,18 @@ export class CourseService {
       where: {
         created_by_user: { user_id: userId },
       },
-      relations: ['created_by_user', 'lectures'],
+      relations: ['created_by_user', 'lectures', 'tagMappings',        // Include tagMappings
+      'tagMappings.tag'],
     });
 
     if (!course) {
       throw new NotFoundException('Course not found or access denied');
     }
 
-    return course;
+    return course.map(course => ({
+    ...course,
+    tags: course.tagMappings?.map(mapping => mapping.tag?.tag_name) || [],
+  }));
 }
 async getAllCourses(){
     const course = await this.courseRepo.find({

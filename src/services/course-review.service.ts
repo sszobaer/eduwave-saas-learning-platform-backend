@@ -61,6 +61,13 @@ export class CourseReviewService {
   }
 
 
+  async getAllReviews(): Promise<CourseReview[]> {
+    return this.courseReviewRepo.find({
+      relations: ['user', 'course'], // Include both user and course details
+      order: { created_at: 'DESC' }, // Optional: Sort by review creation date
+    });
+  }
+  
   async getCourseReviews(course_id: number): Promise<CourseReview[]> {
     const course = await this.courseRepo.findOne({
       where: { course_id },
