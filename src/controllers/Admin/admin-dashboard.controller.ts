@@ -8,17 +8,16 @@ import { AuthGuard } from 'src/guards/auth.guard';
 import { RolesGuard } from 'src/guards/role.guard';
 import { AdminDashboardService } from 'src/services/Admin/admin-dashboard.service';
 
-
 @Controller('admin')
 @UseGuards(AuthGuard, RolesGuard)
 @Roles('ADMIN')
 export class AdminDashboardController {
   constructor(
-    private readonly adminService: AdminDashboardService
+    private readonly adminService: AdminDashboardService,
   ) {}
 
   @Get('dashboard')
-  getDashboardStats() {
-    return this.adminService.getDashboardStats();
+  async getDashboard() {
+    return this.adminService.getAdminDashboardData();
   }
 }
