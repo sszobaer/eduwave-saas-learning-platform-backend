@@ -1,23 +1,23 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from './modules/user.module';
-import { RoleModule } from './modules/role.module';
+import { UserModule } from './modules/user/user.module';
+import { RoleModule } from './modules/role/role.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { AuthModule } from './modules/auth.module';
-import { EmailModule } from './modules/email.module';
-import { QuizzesModule } from './modules/quizzes.module';
-import { QuizAttemptsModule } from './modules/quiz-attempts.module';
-import { QuizAttemptAnswersModule } from './modules/quiz-attempt-answers.module';
-import { QuestionsModule } from './modules/questions.module';
-import { QuestionOptionsModule } from './modules/question-options.module';
-import { CourseModule } from './modules/course.module';
-import { EnrollmentModule } from './modules/enrollment.module';
-import { LectureModule } from './modules/lecture.module';
-import { PaymentModule } from './modules/payment.module';
-import { AssignmentModule } from './modules/assignment.module';
-import { AdminDashboardModule } from './modules/Admin/admin.module';
-import { TeacherModule} from "./modules/Teacher/teacher.module";
-import { CourseReviewModule } from './modules/course-review.module';
+import { AuthModule } from './modules/auth/auth.module';
+import { EmailModule } from './modules/email/email.module';
+import { QuizzesModule } from './modules/quiz/quiz.module';
+import { QuizAttemptsModule } from './modules/quiz/attempt/quiz-attempt.module';
+import { QuizAttemptAnswersModule } from './modules/quiz/attempt/answer/quiz-attempt-answer.module';
+import { QuestionsModule } from './modules/quiz/question/question.module';
+import { QuestionOptionsModule } from './modules/quiz/question/option/question-option.module';
+import { CourseModule } from './modules/course/course.module';
+import { EnrollmentModule } from './modules/enrollment/enrollment.module';
+import { LectureModule } from './modules/lecture/lecture.module';
+import { PaymentModule } from './modules/payment/payment.module';
+import { AssignmentModule } from './modules/assignment/assignment.module';
+import { AdminDashboardModule } from './modules/admin/admin.module';
+import { TeacherModule} from "./modules/teacher/teacher.module";
+import { CourseReviewModule } from './modules/course/review/course-review.module';
 
 @Module({
   imports: [

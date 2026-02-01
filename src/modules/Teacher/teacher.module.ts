@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
-import { TeacherDashboardController } from '../../controllers/Teacher/teacher-dashboard.controller';
-import { TeacherDashboardService } from '../../services/Teacher/teacher-dashboard.service';
+import { TeacherDashboardController } from './dashboard/teacher-dashboard.controller';
+import { TeacherDashboardService } from './dashboard/teacher-dashboard.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/entities/user.entity';
-import { Course } from 'src/entities/course.entity';
-import { AuthModule } from '../auth.module';
-import { Enrollment } from 'src/entities/enrollment.entity'; // Import Enrollment Entity
-import { Payment } from 'src/entities/payment.entity';
-import { Quiz } from 'src/entities/quiz.entity';
+import { User } from 'src/modules/user/entity/user.entity';
+import { Course } from 'src/modules/course/entities/course.entity';
+import { AuthModule } from '../auth/auth.module';
+import { Enrollment } from 'src/modules/enrollment/entities/enrollment.entity'; // Import Enrollment Entity
+import { Payment } from 'src/modules/payment/entities/payment.entity';
+import { Quiz } from 'src/modules/quiz/entities/quiz.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([User, Course, Enrollment, Payment, Quiz]),AuthModule],
