@@ -54,29 +54,41 @@ EduWave provides backend services for an LMS platform, including user management
 ---
 
 ## Custom Folder Structure
+Below are two examples: the repository root layout (what you saw above) and a typical layout inside a single feature module under `src/modules/<module-name>`.
 
-The project follows a **customized and organized directory structure** for better maintainability and scalability:
+Root (high-level):
 
 ```bash
 src/
-├── controllers/      # API route handlers
-├── decorators/       # Custom decorators (e.g., roles, user)
-├── dtos/             # Data Transfer Objects
-├── entities/         # Database entities / models
-├── guards/           # Auth and role-based guards
-├── modules/          # Feature modules
-├── services/         # Business logic and services
-├── utils/            # Shared utility functions
-├── app.module.ts     # Root application module
-└── main.ts           # Application entry point
+├── common/            # decorators, guards, shared utils
+├── modules/           # feature modules (Admin, auth, course, etc.)
+├── app.module.ts
+└── main.ts
 
-test/                 # Test files
-uploads/              # Uploaded files storage
-.env                  # Environment variables
-.gitignore
+test/
 ```
 
----
+Inside a single module (example: `src/modules/course`):
+
+```bash
+src/modules/course/
+├── course.module.ts
+├── course.controller.ts
+├── course.service.ts
+├── dto/
+│  ├── create-course.dto.ts
+│  └── update-course.dto.ts
+├── entities/
+│  └── course.entity.ts
+└── utils/             # module-specific helpers
+```
+
+How to customize these blocks
+
+- Edit only the folder-layout code blocks above to reflect your local project structure.
+- Keep other sections of this `README.md` unchanged unless you need to update environment variables or scripts.
+- If you add new feature modules, follow the module layout shown above so other contributors can match structure and conventions.
+
 
 ## Prerequisites
 
@@ -192,8 +204,8 @@ We welcome contributions to EduWave.
 
 ### Core Contributors
 
-* **Zobaer Ahmed** – Backend Development & System Architecture
-* **Abir Ghose** - Backend Development
+* **S. S. Zobaer Ahmed** – Backend Development & System Architecture
+* **Abir Ghosh** - Backend Development
 * **Sazzad Khan** - Backend Development
 
 If you would like to contribute:
